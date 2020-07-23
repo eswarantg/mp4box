@@ -3,7 +3,6 @@ package mp4box
 import (
 	"encoding/binary"
 	"fmt"
-	"log"
 	"time"
 )
 
@@ -158,12 +157,10 @@ func (b *MovieHeaderBox) ModificationTime() time.Time {
 	case 0:
 		secs := binary.BigEndian.Uint32(p[4:8])
 		t := epochTimeMp4
-		log.Printf("Secs %v ", secs)
 		return t.Add(time.Duration(secs))
 	case 1:
 		secs := binary.BigEndian.Uint64(p[8:16])
 		t := epochTimeMp4
-		log.Printf("Secs %v ", secs)
 		return t.Add(time.Duration(secs))
 	}
 	return time.Time{}
@@ -190,14 +187,12 @@ func (b *MovieHeaderBox) Duration() time.Duration {
 	case 0:
 		scale := binary.BigEndian.Uint32(p[8:12])
 		dur := binary.BigEndian.Uint32(p[12:16])
-		log.Printf("Scale %v Dur %v", scale, dur)
 		if scale != 0 {
 			return time.Duration(dur / scale)
 		}
 	case 1:
 		scale := binary.BigEndian.Uint32(p[16:20])
 		dur := binary.BigEndian.Uint64(p[20:28])
-		log.Printf("Scale %v Dur %v", scale, dur)
 		if scale != 0 {
 			return time.Duration(dur / uint64(scale))
 		}
@@ -208,12 +203,8 @@ func (b *MovieHeaderBox) Duration() time.Duration {
 //String - Display
 func (b *MovieHeaderBox) String() string {
 	var ret string
-	log.Printf("MovieHeaderBox String Check1")
 	ret += b.FullBox.String()
-	log.Printf("MovieHeaderBox String Check2")
 	ret += fmt.Sprintf("\n%v Creation:%v Modification:%v Duration:%v", b.leadString(), b.CreationTime(), b.ModificationTime(), b.Duration())
-	log.Printf("MovieHeaderBox String Check3")
-	log.Print(ret)
 	return ret
 }
 
@@ -285,12 +276,10 @@ func (b *TrackHeaderBox) ModificationTime() time.Time {
 	case 0:
 		secs := binary.BigEndian.Uint32(p[4:8])
 		t := epochTimeMp4
-		log.Printf("Secs %v ", secs)
 		return t.Add(time.Duration(secs))
 	case 1:
 		secs := binary.BigEndian.Uint64(p[8:16])
 		t := epochTimeMp4
-		log.Printf("Secs %v ", secs)
 		return t.Add(time.Duration(secs))
 	}
 	return time.Time{}
@@ -322,13 +311,11 @@ func (b *TrackHeaderBox) Duration() time.Duration {
 	switch b.FullBox.Version() {
 	case 0:
 		dur := binary.BigEndian.Uint32(p[16:20])
-		log.Printf("Scale %v Dur %v", scale, dur)
 		if scale != 0 {
 			return time.Duration(dur / scale)
 		}
 	case 1:
 		dur := binary.BigEndian.Uint64(p[24:32])
-		log.Printf("Scale %v Dur %v", scale, dur)
 		if scale != 0 {
 			return time.Duration(dur / uint64(scale))
 		}

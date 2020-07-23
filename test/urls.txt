@@ -1,0 +1,12 @@
+https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps_480x270_600k/bbb_30fps_480x270_600k_0.m4v
+https://dash.akamaized.net/akamai/bbb_30fps/bbb_a64k/bbb_a64k_0.m4a
+https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps_480x270_600k/bbb_30fps_480x270_600k_1.m4v
+https://dash.akamaized.net/akamai/bbb_30fps/bbb_a64k/bbb_a64k_1.m4a
+
+https://livesim.dashif.org/dash/vod/testpic_2s/V300/init.mp4
+https://livesim.dashif.org/dash/vod/testpic_2s/A48/init.mp4
+https://livesim.dashif.org/dash/vod/testpic_2s/sub_eng/init.mp4
+
+https://livesim.dashif.org/dash/vod/testpic_2s/V300/1.m4s
+https://livesim.dashif.org/dash/vod/testpic_2s/A48/1.m4s
+https://livesim.dashif.org/dash/vod/testpic_2s/sub_eng/1.m4s
