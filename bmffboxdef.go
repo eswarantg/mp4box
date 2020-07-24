@@ -351,16 +351,6 @@ type MovieExtendsHeaderBox struct {
 	FullBox
 }
 
-//MovieFragmentHeaderBox -
-/*
-aligned(8) class MovieFragmentHeaderBox extends FullBox(‘mfhd’, 0, 0){
-	unsigned int(32)  sequence_number;
- }
-*/
-type MovieFragmentHeaderBox struct {
-	FullBox
-}
-
 //TrackFragmentHeaderBox -
 /*
 aligned(8) class TrackFragmentHeaderBox extends FullBox(‘tfhd’, 0, tf_flags){
@@ -574,18 +564,5 @@ aligned(8) class SegmentIndexBox extends FullBox("sidx", version, 0) {
 }
 */
 type SegmentIndexBox struct {
-	FullBox
-}
-
-//TrackFragmentBaseMediaDecodeTimeBox -
-/*
-aligned(8) class TrackFragmentBaseMediaDecodeTimeBox extends FullBox("tfdt", version, 0) {
-	if (version==1) {
-	unsigned int(64) baseMediaDecodeTime; } else { // version==0
-	unsigned int(32) baseMediaDecodeTime; }
-	}
-}
-*/
-type TrackFragmentBaseMediaDecodeTimeBox struct {
 	FullBox
 }
