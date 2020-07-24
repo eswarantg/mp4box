@@ -55,7 +55,7 @@ func loadURLs(t *testing.T) {
 			t.Errorf("Error Parsing url%v: %v", urlStr, err.Error())
 			continue
 		}
-		filename := "test/" + strings.ReplaceAll(u.Path, "/", "_")
+		filename := "test/" + strings.ReplaceAll(u.Hostname(), ".", "_") + strings.ReplaceAll(u.Path, "/", "_")
 		_, err = os.Stat(filename)
 		if err == nil {
 			t.Logf("File exists. %s", filename)
@@ -111,24 +111,22 @@ func getType(myvar interface{}) string {
 }
 
 //HELPER - End
-func TestGetUrls(t *testing.T) {
+func TestReadBox1(t *testing.T) {
 	loadURLs(t)
 	for _, name := range urlsToTest {
-		t.Logf("%v", name)
-	}
-}
-
-func TestReadBox1(t *testing.T) {
-	decoder := readMp4File("test/bbb_30fps_1024x576_2500k_0.m4v")
-	i := 0
-	for {
-		i++
-		box, err := decoder.NextBox()
-		if err != nil {
-			t.Logf("Error : %s", err.Error())
-			break
+		t.Logf("*************************************")
+		decoder := readMp4File(name)
+		i := 0
+		for {
+			i++
+			box, err := decoder.NextBox()
+			if err != nil {
+				t.Logf("Error : %s", err.Error())
+				break
+			}
+			boxType := getType(box)
+			t.Logf("%v %v", boxType, box.String())
 		}
-		boxType := getType(box)
-		t.Logf("%v %v", boxType, box.String())
+		t.Logf("*************************************")
 	}
 }
