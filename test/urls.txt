@@ -10,3 +10,6 @@ https://livesim.dashif.org/dash/vod/testpic_2s/sub_eng/init.mp4
 https://livesim.dashif.org/dash/vod/testpic_2s/V300/1.m4s
 https://livesim.dashif.org/dash/vod/testpic_2s/A48/1.m4s
 https://livesim.dashif.org/dash/vod/testpic_2s/sub_eng/1.m4s
+https://livesim.dashif.org/dash/vod/testpic_2s/V300/2.m4s
+https://livesim.dashif.org/dash/vod/testpic_2s/A48/2.m4s
+https://livesim.dashif.org/dash/vod/testpic_2s/sub_eng/2.m4s

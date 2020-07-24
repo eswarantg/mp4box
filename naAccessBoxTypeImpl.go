@@ -192,5 +192,19 @@ func (*naAccessBoxTypeImpl) GetProgressiveDownloadInfoBox() (*ProgressiveDownloa
 	return nil, ErrBoxNotFound
 }
 
+func (*naAccessBoxTypeImpl) GetSegmentBox() (*SegmentBox, error) {
+	return nil, ErrBoxNotFound
+}
+
+func (*naAccessBoxTypeImpl) GetTrackFragmentMediaAdjustmentBox() (*TrackFragmentMediaAdjustmentBox, error) {
+	return nil, ErrBoxNotFound
+}
+func (*naAccessBoxTypeImpl) GetSegmentIndexBox() (*SegmentIndexBox, error) {
+	return nil, ErrBoxNotFound
+}
+func (*naAccessBoxTypeImpl) GetTrackFragmentBaseMediaDecodeTimeBox() (*TrackFragmentBaseMediaDecodeTimeBox, error) {
+	return nil, ErrBoxNotFound
+}
+
 //BaseBox -
 func (*naAccessBoxTypeImpl) GetBaseBox() (*BaseBox, error) { return nil, ErrBoxNotFound }

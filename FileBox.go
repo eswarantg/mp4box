@@ -71,3 +71,21 @@ func (b *FileBox) String() string {
 	ret += fmt.Sprintf("\n%v MajorBrand: %v, MinorVersion: %v, CompatibleBrands:%v ", b.leadString(), b.MajorBrand(), b.MinorVersion(), b.CompatibleBrands())
 	return ret
 }
+
+//SegmentBox - 'styp' is same as 'ftyp'
+type SegmentBox struct {
+	FileBox
+}
+
+//Interface methods Impl - Begin
+//getLeafBox() returns leaf object Box interface
+func (b *SegmentBox) getLeafBox() AccessBoxType {
+	return b
+}
+
+//GetSegmentBox - Implement AccessBoxType method for this object
+func (b *SegmentBox) GetSegmentBox() (*SegmentBox, error) {
+	return b, nil
+}
+
+//Interface methods Impl - End

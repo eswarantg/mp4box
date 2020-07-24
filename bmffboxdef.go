@@ -1,5 +1,8 @@
 package mp4box
 
+//Source
+//https://mpeg.chiariglione.org/standards/mpeg-4/iso-base-media-file-format/text-isoiec-14496-12-5th-edition
+
 //MediaDataBox -
 /*
 aligned(8) class MediaDataBox extends Box(‘mdat’) { bit(8) data[];
@@ -348,20 +351,6 @@ type MovieExtendsHeaderBox struct {
 	FullBox
 }
 
-//TrackExtendsBox -
-/*
-aligned(8) class TrackExtendsBox extends FullBox(‘trex’, 0, 0){
-	unsigned int(32) track_ID;
-	unsigned int(32) default_sample_description_index;
-	unsigned int(32) default_sample_duration;
-	unsigned int(32) default_sample_size;
-	unsigned int(32) default_sample_flags
-}
-*/
-type TrackExtendsBox struct {
-	FullBox
-}
-
 //MovieFragmentHeaderBox -
 /*
 aligned(8) class MovieFragmentHeaderBox extends FullBox(‘mfhd’, 0, 0){
@@ -539,5 +528,64 @@ aligned(8) class ProgressiveDownloadInfoBox extends FullBox(‘pdin’, version 
 	} }
 */
 type ProgressiveDownloadInfoBox struct {
+	FullBox
+}
+
+//Source:
+//https://www.etsi.org/deliver/etsi_ts/126200_126299/126244/10.02.00_60/ts_126244v100200p.pdf
+
+//TrackFragmentMediaAdjustmentBox -
+/*
+aligned(8) class TrackFragmentMediaAdjustmentBox extends FullBox("tfma", version, 0) {
+	unsigned int(32) entry_count;
+	for (i=1; i <= entry_count; i++) {
+		if (version==1) {
+			unsigned int(64) segment_duration; int(64) media_time;
+		} else { // version==0
+			unsigned int(32) segment_duration; int(32) media_time;
+		}
+		int(16) media_rate_integer; int(16) media_rate_fraction = 0;
+	}
+}
+*/
+type TrackFragmentMediaAdjustmentBox struct {
+	FullBox
+}
+
+//SegmentIndexBox -
+/*
+aligned(8) class SegmentIndexBox extends FullBox("sidx", version, 0) {
+	unsigned int(32) reference_ID;
+	unsigned int(32) timescale;
+	if (version==0)
+	{
+		bit (1)				reference_type;
+		unsigned int(31)	referenced_size;
+		unsigned int(32)	subsegment_duration;
+		bit(1)				starts_with_SAP;
+		unsigned int(3)		SAP_type;
+		unsigned int(28)	SAP_delta_time;
+		unsigned int(32) earliest_presentation_time; unsigned int(32) first_offset;
+	} else {
+		unsigned int(64) earliest_presentation_time;
+		unsigned int(64) first_offset; }
+		unsigned int(16) reserved = 0; unsigned int(16) reference_count; for(i=1; i <= reference_count; i++) {
+	}
+}
+*/
+type SegmentIndexBox struct {
+	FullBox
+}
+
+//TrackFragmentBaseMediaDecodeTimeBox -
+/*
+aligned(8) class TrackFragmentBaseMediaDecodeTimeBox extends FullBox("tfdt", version, 0) {
+	if (version==1) {
+	unsigned int(64) baseMediaDecodeTime; } else { // version==0
+	unsigned int(32) baseMediaDecodeTime; }
+	}
+}
+*/
+type TrackFragmentBaseMediaDecodeTimeBox struct {
 	FullBox
 }

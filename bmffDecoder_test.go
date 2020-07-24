@@ -121,7 +121,9 @@ func TestReadBox1(t *testing.T) {
 			i++
 			box, err := decoder.NextBox()
 			if err != nil {
-				t.Logf("Error : %s", err.Error())
+				if err != io.EOF {
+					t.Errorf("Error : %s", err.Error())
+				}
 				break
 			}
 			boxType := getType(box)

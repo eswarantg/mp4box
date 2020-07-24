@@ -103,6 +103,14 @@ func makeEmptyBoxObject(boxType string) AccessBoxType {
 	case "pdin":
 		return new(ProgressiveDownloadInfoBox)
 		//Standalone boxes - End
+	case "styp":
+		return new(SegmentBox)
+	case "tfma":
+		return new(TrackFragmentMediaAdjustmentBox)
+	case "sidx":
+		return new(SegmentIndexBox)
+	case "tfdt":
+		return new(TrackFragmentBaseMediaDecodeTimeBox)
 	}
 	return new(BaseBox)
 }

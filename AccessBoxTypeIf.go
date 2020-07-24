@@ -70,5 +70,10 @@ type AccessBoxType interface {
 	GetSampleScaleBox() (*SampleScaleBox, error)
 	GetSubSampleInformationBox() (*SubSampleInformationBox, error)
 	GetProgressiveDownloadInfoBox() (*ProgressiveDownloadInfoBox, error)
+	GetSegmentBox() (*SegmentBox, error)
+	GetTrackFragmentMediaAdjustmentBox() (*TrackFragmentMediaAdjustmentBox, error)
+	GetSegmentIndexBox() (*SegmentIndexBox, error)
+	GetTrackFragmentBaseMediaDecodeTimeBox() (*TrackFragmentBaseMediaDecodeTimeBox, error)
+	//Default
 	GetBaseBox() (*BaseBox, error)
 }
