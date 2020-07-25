@@ -92,13 +92,13 @@ func loadURLs(t *testing.T) {
 	}
 }
 
-func readMp4File(filename string) *BoxDecoder {
+func readMp4File(filename string) *BoxReader {
 	file, err := os.Open(filename) // For read access.
 	if err != nil {
 		log.Fatal(err)
 	}
 	rdr := bufio.NewReader(file)
-	return NewBoxDecoder(rdr)
+	return NewBoxReader(rdr)
 }
 
 func getType(myvar interface{}) string {
@@ -117,11 +117,11 @@ func TestReadBox1(t *testing.T) {
 	for _, name := range urlsToTest {
 		testno++
 		t.Logf("*************** %v %v **********************", testno, name)
-		decoder := readMp4File(name)
+		reader := readMp4File(name)
 		i := 0
 		for {
 			i++
-			box, err := decoder.NextBox()
+			box, err := reader.NextBox()
 			if err != nil {
 				if err != io.EOF {
 					t.Errorf("Error : %s", err)

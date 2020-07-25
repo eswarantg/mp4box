@@ -18,11 +18,11 @@ type FileBox struct {
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *FileBox) getLeafBox() AccessBoxType {
+func (b *FileBox) getLeafBox() Box {
 	return b
 }
 
-//GetFileBox - Implement AccessBoxType method for this object
+//GetFileBox - Implement Box method for this object
 func (b *FileBox) GetFileBox() (*FileBox, error) {
 	return b, nil
 }
@@ -80,11 +80,11 @@ type SegmentBox struct {
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *SegmentBox) getLeafBox() AccessBoxType {
+func (b *SegmentBox) getLeafBox() Box {
 	return b
 }
 
-//GetSegmentBox - Implement AccessBoxType method for this object
+//GetSegmentBox - Implement Box method for this object
 func (b *SegmentBox) GetSegmentBox() (*SegmentBox, error) {
 	return b, nil
 }

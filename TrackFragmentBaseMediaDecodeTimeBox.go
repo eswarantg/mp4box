@@ -22,11 +22,11 @@ type TrackFragmentBaseMediaDecodeTimeBox struct {
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *TrackFragmentBaseMediaDecodeTimeBox) getLeafBox() AccessBoxType {
+func (b *TrackFragmentBaseMediaDecodeTimeBox) getLeafBox() Box {
 	return b
 }
 
-//GetTrackFragmentBaseMediaDecodeTimeBox - Implement AccessBoxType method for this object
+//GetTrackFragmentBaseMediaDecodeTimeBox - Implement Box method for this object
 func (b *TrackFragmentBaseMediaDecodeTimeBox) GetTrackFragmentBaseMediaDecodeTimeBox() (*TrackFragmentBaseMediaDecodeTimeBox, error) {
 	return b, nil
 }

@@ -20,27 +20,27 @@ func init() {
 
 //BaseBox - Base box holding the bytes
 type BaseBox struct {
-	naAccessBoxTypeImpl               //get all methods of ErrBoxNotFound responses other than overridden
-	boxSize             int64         //Box Size
-	boxType             string        //Box Type
-	payload             *[]byte       //Payload of the Box
-	level               int           //Level of the box in heirachy
-	parent              AccessBoxType //Parent Box access
+	naAccessBoxTypeImpl         //get all methods of ErrBoxNotFound responses other than overridden
+	boxSize             int64   //Box Size
+	boxType             string  //Box Type
+	payload             *[]byte //Payload of the Box
+	level               int     //Level of the box in heirachy
+	parent              Box     //Parent Box access
 }
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *BaseBox) getLeafBox() AccessBoxType {
+func (b *BaseBox) getLeafBox() Box {
 	return b
 }
 
-//GetBaseBox - Implement AccessBoxType method for this object
+//GetBaseBox - Implement Box method for this object
 func (b *BaseBox) GetBaseBox() (*BaseBox, error) {
 	return b, nil
 }
 
 //GetParentByName - Get parent by name
-func (b *BaseBox) GetParentByName(boxType string) (AccessBoxType, error) {
+func (b *BaseBox) GetParentByName(boxType string) (Box, error) {
 	if b.parent != nil {
 		if b.parent.Boxtype() == boxType {
 			return b.getLeafBox(), nil
@@ -51,7 +51,7 @@ func (b *BaseBox) GetParentByName(boxType string) (AccessBoxType, error) {
 }
 
 //GetChildByName - Get child by name
-func (b *BaseBox) GetChildByName(boxType string) (AccessBoxType, error) {
+func (b *BaseBox) GetChildByName(boxType string) (Box, error) {
 	return nil, ErrBoxNotFound
 }
 
@@ -68,7 +68,7 @@ func (b *BaseBox) isCollection() bool {
 //Interface methods Impl - End
 
 //NewBaseBox - Create a new base box
-func (b *BaseBox) initData(boxSize int64, boxType string, payload *[]byte, parent AccessBoxType) error {
+func (b *BaseBox) initData(boxSize int64, boxType string, payload *[]byte, parent Box) error {
 	b.boxSize = boxSize
 	b.boxType = boxType
 	b.payload = payload
@@ -115,8 +115,8 @@ func (b *BaseBox) String() string {
 	return ret
 }
 
-//Payload - Returns the payload excluding headers
-func (b *BaseBox) writeBytes(w io.Writer) error {
+//Write - Writes the bytes to io.Writer
+func (b *BaseBox) Write(w io.Writer) error {
 	if b.boxSize == 0 {
 		tmpInt32 := int32(0)
 		binary.Write(w, binary.BigEndian, tmpInt32)

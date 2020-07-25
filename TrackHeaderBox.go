@@ -40,11 +40,11 @@ type TrackHeaderBox struct {
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *TrackHeaderBox) getLeafBox() AccessBoxType {
+func (b *TrackHeaderBox) getLeafBox() Box {
 	return b
 }
 
-//GetMTrackHeaderBox - Implement AccessBoxType method for this object
+//GetMTrackHeaderBox - Implement Box method for this object
 func (b *TrackHeaderBox) GetMTrackHeaderBox() (*TrackHeaderBox, error) {
 	return b, nil
 }

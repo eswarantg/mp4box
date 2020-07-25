@@ -1,0 +1,64 @@
+@startuml mp4box
+package mp4box {
+    interface Box {
+        .. Content Access ..
+        + Boxtype(): string
+        + String(): string
+        + GetChildByName(boxType string) (Box, error)
+        + GetParentByName(boxType string) (Box, error)
+        + Write(io.Writer) error
+        .. Box Access ..
+        + GetBaseBox(): *BaseBox, error
+        + GetFileBox(): *FileBox, error
+        + GetXXXBox_FromBox(): *XXXBox_FromBox, error
+        + GetYYYBox_FromFullBox(): *YYYBox_FromFullBox, error
+    }
+    class naAccessBoxTypeImpl {
+    }
+    class BoxReader {
+        {static} NewBoxDecoder(io.reader) *BoxReader
+        + NextBox(): Box, error 
+    }
+    class BoxFactory {
+        + MakeEmptyBoxObject(boxType) Box
+    }
+    class BaseBox {
+        .. Get Accessor ..
+        + Size(): int64
+    }
+    class FullBox {
+        .. Get Accessor ..
+        + Version(): int8
+        + Flags(): []int8
+    }
+    class XXXBox_FromBox {
+        .. Get Accessor ..
+        + Property1()
+    }
+    class YYYBox_FromFullBox {
+        .. Get Accessor ..
+        + Property2()
+    }
+    class ErrBoxNotFound
+    naAccessBoxTypeImpl - ErrBoxNotFound: returns >
+    Box ^-- naAccessBoxTypeImpl 
+    naAccessBoxTypeImpl ^-- BaseBox
+    BaseBox ^-- FullBox
+
+    BaseBox ^-- CollectionBaseBox
+    FullBox ^-- CollectionFullBox 
+    
+    BaseBox ^-- FileBox
+    BaseBox ^-- XXXBox_FromBox
+
+    FullBox ^-- YYYBox_FromFullBox
+    BoxReader --> BoxFactory: uses 
+    BoxFactory --> FileBox : creates 
+    BoxFactory --> CollectionBaseBox : creates 
+    BoxFactory --> CollectionFullBox  : creates 
+}
+package Reader {
+    Consumer --> BoxReader : Instantiates, Reads
+    Consumer --> Box : GetXXXBox, GetChildByName, GetParentByName
+}
+@endumlss

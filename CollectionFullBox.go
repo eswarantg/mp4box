@@ -7,16 +7,16 @@ import (
 //CollectionFullBox - Collection of boxes
 type CollectionFullBox struct {
 	FullBox
-	childBoxes map[string]AccessBoxType
+	childBoxes map[string]Box
 }
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *CollectionFullBox) getLeafBox() AccessBoxType {
+func (b *CollectionFullBox) getLeafBox() Box {
 	return b
 }
 
-//GetCollectionFullBox - Implement AccessBoxType method for this object
+//GetCollectionFullBox - Implement Box method for this object
 func (b *CollectionFullBox) GetCollectionFullBox() (*CollectionFullBox, error) {
 	return b, nil
 }
@@ -28,9 +28,9 @@ func (b *CollectionFullBox) isCollection() bool {
 
 //Interface methods Impl - End
 //NewBaseBox - Create a new base box
-func (b *CollectionFullBox) initData(boxSize int64, boxType string, payload *[]byte, parent AccessBoxType) error {
+func (b *CollectionFullBox) initData(boxSize int64, boxType string, payload *[]byte, parent Box) error {
 	b.FullBox.initData(boxSize, boxType, nil, parent)
-	b.childBoxes = make(map[string]AccessBoxType)
+	b.childBoxes = make(map[string]Box)
 	b.populateChildBoxes(payload)
 	return nil
 }
@@ -47,7 +47,7 @@ func (b *CollectionFullBox) String() string {
 func (b *CollectionFullBox) populateChildBoxes(payload *[]byte) error {
 	if payload != nil {
 		r := bytes.NewReader(*payload)
-		decoder := newBoxDecoder(r, b)
+		decoder := newBoxReader(r, b)
 		for {
 			box, err := decoder.NextBox()
 			if err != nil {

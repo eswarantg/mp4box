@@ -21,11 +21,11 @@ type TrackExtendsBox struct {
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *TrackExtendsBox) getLeafBox() AccessBoxType {
+func (b *TrackExtendsBox) getLeafBox() Box {
 	return b
 }
 
-//GetMTrackHeaderBox - Implement AccessBoxType method for this object
+//GetMTrackHeaderBox - Implement Box method for this object
 func (b *TrackExtendsBox) GetMTrackHeaderBox() (*TrackExtendsBox, error) {
 	return b, nil
 }

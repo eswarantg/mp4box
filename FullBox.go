@@ -15,11 +15,11 @@ type FullBox struct {
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *FullBox) getLeafBox() AccessBoxType {
+func (b *FullBox) getLeafBox() Box {
 	return b
 }
 
-//GetFullBox - Implement AccessBoxType method for this object
+//GetFullBox - Implement Box method for this object
 func (b *FullBox) GetFullBox() (*FullBox, error) {
 	return b, nil
 }

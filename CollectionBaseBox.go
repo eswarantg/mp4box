@@ -7,22 +7,22 @@ import (
 //CollectionBaseBox - Collection of boxes
 type CollectionBaseBox struct {
 	BaseBox
-	childBoxes map[string]AccessBoxType
+	childBoxes map[string]Box
 }
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *CollectionBaseBox) getLeafBox() AccessBoxType {
+func (b *CollectionBaseBox) getLeafBox() Box {
 	return b
 }
 
-//GetCollectionBaseBox - Implement AccessBoxType method for this object
+//GetCollectionBaseBox - Implement Box method for this object
 func (b *CollectionBaseBox) GetCollectionBaseBox() (*CollectionBaseBox, error) {
 	return b, nil
 }
 
 //GetChildByName - Get child by name
-func (b *CollectionBaseBox) GetChildByName(boxType string) (AccessBoxType, error) {
+func (b *CollectionBaseBox) GetChildByName(boxType string) (Box, error) {
 	_, ok := b.childBoxes[boxType]
 	if ok {
 		return b.childBoxes[boxType], nil
@@ -46,9 +46,9 @@ func (b *CollectionBaseBox) isCollection() bool {
 //Interface methods Impl - End
 
 //NewBaseBox - Create a new base box
-func (b *CollectionBaseBox) initData(boxSize int64, boxType string, payload *[]byte, parent AccessBoxType) error {
+func (b *CollectionBaseBox) initData(boxSize int64, boxType string, payload *[]byte, parent Box) error {
 	b.BaseBox.initData(boxSize, boxType, nil, parent)
-	b.childBoxes = make(map[string]AccessBoxType)
+	b.childBoxes = make(map[string]Box)
 	b.populateChildBoxes(payload)
 	return nil
 }
@@ -65,7 +65,7 @@ func (b *CollectionBaseBox) String() string {
 func (b *CollectionBaseBox) populateChildBoxes(payload *[]byte) error {
 	if payload != nil {
 		r := bytes.NewReader(*payload)
-		decoder := newBoxDecoder(r, b)
+		decoder := newBoxReader(r, b)
 		for {
 			box, err := decoder.NextBox()
 			if err != nil {

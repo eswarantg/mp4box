@@ -7,18 +7,18 @@ import (
 	"strings"
 )
 
-//BoxDecoder - Decode Box from Stream
-type BoxDecoder struct {
+//BoxReader - Decode Box from Stream
+type BoxReader struct {
 	r      io.Reader
-	parent AccessBoxType
+	parent Box
 }
 
-//NewBoxDecoder - Create a decoder for stream
-func NewBoxDecoder(r io.Reader) *BoxDecoder {
-	return newBoxDecoder(r, nil)
+//NewBoxReader - Create a reader for stream
+func NewBoxReader(r io.Reader) *BoxReader {
+	return newBoxReader(r, nil)
 }
-func newBoxDecoder(r io.Reader, parent AccessBoxType) *BoxDecoder {
-	ret := &BoxDecoder{}
+func newBoxReader(r io.Reader, parent Box) *BoxReader {
+	ret := &BoxReader{}
 	ret.r = r
 	if parent != nil {
 		ret.parent = parent
@@ -47,7 +47,7 @@ unsigned int(8)[16] usertype = extended_type;
 */
 
 //NextBox - Returns the Box read
-func (d *BoxDecoder) NextBox() (AccessBoxType, error) {
+func (d *BoxReader) NextBox() (Box, error) {
 	var boxHdr struct {
 		Size    int32
 		BoxType [4]byte
@@ -101,10 +101,11 @@ func (d *BoxDecoder) NextBox() (AccessBoxType, error) {
 }
 
 //makeBox - Make Box based on boxType
-func (d *BoxDecoder) makeBox(boxSize int64, boxType string, payload *[]byte, extendedType []int8) (AccessBoxType, error) {
-	var ret AccessBoxType
+func (d *BoxReader) makeBox(boxSize int64, boxType string, payload *[]byte, extendedType []int8) (Box, error) {
+	var ret Box
 	var err error
-	ret = makeEmptyBoxObject(boxType)
+	factory := BoxFactory{}
+	ret = factory.MakeEmptyBoxObject(boxType)
 	if ret == nil {
 		err = ErrUnknownBox
 	} else {

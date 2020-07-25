@@ -37,11 +37,11 @@ type MovieHeaderBox struct {
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *MovieHeaderBox) getLeafBox() AccessBoxType {
+func (b *MovieHeaderBox) getLeafBox() Box {
 	return b
 }
 
-//GetMovieHeaderBox - Implement AccessBoxType method for this object
+//GetMovieHeaderBox - Implement Box method for this object
 func (b *MovieHeaderBox) GetMovieHeaderBox() (*MovieHeaderBox, error) {
 	return b, nil
 }

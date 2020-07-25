@@ -1,7 +1,11 @@
 package mp4box
 
-//makeEmptyBoxObject - make object by boxType
-func makeEmptyBoxObject(boxType string) AccessBoxType {
+//BoxFactory - Create BoxObject
+type BoxFactory struct {
+}
+
+//MakeEmptyBoxObject - make object by boxType
+func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 	//collectionBaseBoxList
 	switch boxType {
 	//CollectionBaseBox - Begin

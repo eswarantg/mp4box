@@ -17,16 +17,16 @@ extends FullBox(xxxx, version = 0, 0) {
 */
 type CollectionFullBoxCounted struct {
 	FullBox
-	childBoxes map[string]AccessBoxType
+	childBoxes map[string]Box
 }
 
 //Interface methods Impl - Begin
 //getLeafBox() returns leaf object Box interface
-func (b *CollectionFullBoxCounted) getLeafBox() AccessBoxType {
+func (b *CollectionFullBoxCounted) getLeafBox() Box {
 	return b
 }
 
-//GetCollectionFullBoxCounted - Implement AccessBoxType method for this object
+//GetCollectionFullBoxCounted - Implement Box method for this object
 func (b *CollectionFullBoxCounted) GetCollectionFullBoxCounted() (*CollectionFullBoxCounted, error) {
 	return b, nil
 }
@@ -38,9 +38,9 @@ func (b *CollectionFullBoxCounted) isCollection() bool {
 
 //Interface methods Impl - End
 //NewBaseBox - Create a new base box
-func (b *CollectionFullBoxCounted) initData(boxSize int64, boxType string, payload *[]byte, parent AccessBoxType) error {
+func (b *CollectionFullBoxCounted) initData(boxSize int64, boxType string, payload *[]byte, parent Box) error {
 	b.FullBox.initData(boxSize, boxType, nil, parent)
-	b.childBoxes = make(map[string]AccessBoxType)
+	b.childBoxes = make(map[string]Box)
 	b.populateChildBoxes(payload)
 	return nil
 }
@@ -59,9 +59,9 @@ func (b *CollectionFullBoxCounted) populateChildBoxes(payload *[]byte) error {
 	if payload != nil {
 		counter := binary.BigEndian.Uint32(*payload)
 		r := bytes.NewReader(*payload)
-		decoder := newBoxDecoder(r, b)
+		decoder := newBoxReader(r, b)
 		for {
-			var box AccessBoxType
+			var box Box
 			box, err = decoder.NextBox()
 			if err != nil {
 				break
