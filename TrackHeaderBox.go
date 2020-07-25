@@ -58,11 +58,11 @@ func (b *TrackHeaderBox) CreationTime() time.Time {
 	case 0:
 		secs := binary.BigEndian.Uint32(p[0:4])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	case 1:
 		secs := binary.BigEndian.Uint64(p[0:8])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	}
 	return time.Time{}
 }
@@ -74,11 +74,11 @@ func (b *TrackHeaderBox) ModificationTime() time.Time {
 	case 0:
 		secs := binary.BigEndian.Uint32(p[4:8])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	case 1:
 		secs := binary.BigEndian.Uint64(p[8:16])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	}
 	return time.Time{}
 }
@@ -110,12 +110,14 @@ func (b *TrackHeaderBox) Duration() time.Duration {
 	case 0:
 		dur := binary.BigEndian.Uint32(p[16:20])
 		if scale != 0 {
-			return time.Duration(dur / scale)
+			secs := float64(dur) / float64(scale)
+			return time.Duration(secs*1000000) * time.Microsecond
 		}
 	case 1:
 		dur := binary.BigEndian.Uint64(p[24:32])
 		if scale != 0 {
-			return time.Duration(dur / uint64(scale))
+			secs := float64(dur) / float64(scale)
+			return time.Duration(secs*1000000) * time.Microsecond
 		}
 	}
 	return 0 * time.Second
@@ -125,6 +127,7 @@ func (b *TrackHeaderBox) Duration() time.Duration {
 func (b *TrackHeaderBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
-	ret += fmt.Sprintf("\n%v Creation:%v Modification:%v Duration:%v", b.leadString(), b.CreationTime(), b.ModificationTime(), b.Duration())
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
+	ret += fmt.Sprintf(" Creation:%v Modification:%v Duration:%v", b.CreationTime(), b.ModificationTime(), b.Duration())
 	return ret
 }

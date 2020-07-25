@@ -113,8 +113,10 @@ func getType(myvar interface{}) string {
 //HELPER - End
 func TestReadBox1(t *testing.T) {
 	loadURLs(t)
+	testno := 0
 	for _, name := range urlsToTest {
-		t.Logf("*************************************")
+		testno++
+		t.Logf("*************** %v %v **********************", testno, name)
 		decoder := readMp4File(name)
 		i := 0
 		for {
@@ -122,13 +124,13 @@ func TestReadBox1(t *testing.T) {
 			box, err := decoder.NextBox()
 			if err != nil {
 				if err != io.EOF {
-					t.Errorf("Error : %s", err.Error())
+					t.Errorf("Error : %s", err)
 				}
 				break
 			}
 			boxType := getType(box)
-			t.Logf("%v %v", boxType, box.String())
+			t.Logf("%v %v", boxType, box)
 		}
-		t.Logf("*************************************")
+		t.Logf("*************** %v %v **********************", testno, name)
 	}
 }

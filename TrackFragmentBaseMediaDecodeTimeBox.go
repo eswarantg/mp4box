@@ -39,12 +39,12 @@ func (b *TrackFragmentBaseMediaDecodeTimeBox) BaseMediaDecodeTime(timescale uint
 	switch b.FullBox.Version() {
 	case 0:
 		ticks := binary.BigEndian.Uint32(p[0:4])
-		secs := ticks / timescale
-		return time.Duration(secs)
+		secs := float64(ticks) / float64(timescale)
+		return time.Duration(secs*1000000) * time.Microsecond
 	case 1:
 		ticks := binary.BigEndian.Uint64(p[0:8])
-		secs := ticks / uint64(timescale)
-		return time.Duration(secs)
+		secs := float64(ticks) / float64(timescale)
+		return time.Duration(secs*1000000) * time.Microsecond
 	}
 	return 0
 }
@@ -53,6 +53,7 @@ func (b *TrackFragmentBaseMediaDecodeTimeBox) BaseMediaDecodeTime(timescale uint
 func (b *TrackFragmentBaseMediaDecodeTimeBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
-	ret += fmt.Sprintf("\n%v BaseMediaDecodeTime:%v ", b.leadString(), b.BaseMediaDecodeTime(90000))
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
+	ret += fmt.Sprintf(" BaseMediaDecodeTime:%v ", b.BaseMediaDecodeTime(90000))
 	return ret
 }

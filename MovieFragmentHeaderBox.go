@@ -38,6 +38,7 @@ func (b *MovieFragmentHeaderBox) SequenceNumber() uint32 {
 func (b *MovieFragmentHeaderBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
-	ret += fmt.Sprintf("\n%v SequenceNumber:%v ", b.leadString(), b.SequenceNumber())
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
+	ret += fmt.Sprintf(" SequenceNumber:%v ", b.SequenceNumber())
 	return ret
 }

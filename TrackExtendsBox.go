@@ -42,6 +42,7 @@ func (b *TrackExtendsBox) TrackID() uint32 {
 func (b *TrackExtendsBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
-	ret += fmt.Sprintf("\n%v TrackID:%v ", b.leadString(), b.TrackID())
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
+	ret += fmt.Sprintf(" TrackID:%v ", b.TrackID())
 	return ret
 }

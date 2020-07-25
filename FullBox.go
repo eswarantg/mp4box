@@ -49,7 +49,7 @@ func (b *FullBox) Flags() []uint8 {
 func (b *FullBox) String() string {
 	var ret string
 	ret += b.BaseBox.String()
-	ret += fmt.Sprintf("\n%v ", b.leadString())
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
 	ret += fmt.Sprintf(" Version: %v, Flags: %v", b.Version(), b.Flags())
 	return ret
 }

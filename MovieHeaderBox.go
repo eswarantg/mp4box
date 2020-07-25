@@ -55,11 +55,11 @@ func (b *MovieHeaderBox) CreationTime() time.Time {
 	case 0:
 		secs := binary.BigEndian.Uint32(p[0:4])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	case 1:
 		secs := binary.BigEndian.Uint64(p[0:8])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	}
 	return time.Time{}
 }
@@ -71,11 +71,11 @@ func (b *MovieHeaderBox) ModificationTime() time.Time {
 	case 0:
 		secs := binary.BigEndian.Uint32(p[4:8])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	case 1:
 		secs := binary.BigEndian.Uint64(p[8:16])
 		t := epochTimeMp4
-		return t.Add(time.Duration(secs))
+		return t.Add(time.Duration(secs) * time.Second)
 	}
 	return time.Time{}
 }
@@ -102,13 +102,15 @@ func (b *MovieHeaderBox) Duration() time.Duration {
 		scale := binary.BigEndian.Uint32(p[8:12])
 		dur := binary.BigEndian.Uint32(p[12:16])
 		if scale != 0 {
-			return time.Duration(dur / scale)
+			secs := float64(dur) / float64(scale)
+			return time.Duration(secs*1000000) * time.Microsecond
 		}
 	case 1:
 		scale := binary.BigEndian.Uint32(p[16:20])
 		dur := binary.BigEndian.Uint64(p[20:28])
 		if scale != 0 {
-			return time.Duration(dur / uint64(scale))
+			secs := float64(dur) / float64(scale)
+			return time.Duration(secs*1000000) * time.Microsecond
 		}
 	}
 	return 0 * time.Second
@@ -118,6 +120,7 @@ func (b *MovieHeaderBox) Duration() time.Duration {
 func (b *MovieHeaderBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
-	ret += fmt.Sprintf("\n%v Creation:%v Modification:%v Duration:%v", b.leadString(), b.CreationTime(), b.ModificationTime(), b.Duration())
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
+	ret += fmt.Sprintf(" Creation:%v Modification:%v Duration:%v", b.CreationTime(), b.ModificationTime(), b.Duration())
 	return ret
 }

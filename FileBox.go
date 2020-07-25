@@ -68,7 +68,8 @@ func (b *FileBox) CompatibleBrands() []string {
 func (b *FileBox) String() string {
 	var ret string
 	ret += b.BaseBox.String()
-	ret += fmt.Sprintf("\n%v MajorBrand: %v, MinorVersion: %v, CompatibleBrands:%v ", b.leadString(), b.MajorBrand(), b.MinorVersion(), b.CompatibleBrands())
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
+	ret += fmt.Sprintf(" MajorBrand: %v, MinorVersion: %v, CompatibleBrands:%v ", b.MajorBrand(), b.MinorVersion(), b.CompatibleBrands())
 	return ret
 }
 
