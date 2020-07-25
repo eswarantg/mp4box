@@ -6,7 +6,7 @@
 * Only when specific Property is required the actual parsing takes place
 
 ## Class Diagram
-[[File:out/class/mp4box.png|center|class diagram]]
+![class diagram](out/class/mp4box.png?raw=true "Class Diagram")
 
 ## Implementation Details
 * Base frame work
