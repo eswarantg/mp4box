@@ -56,6 +56,9 @@ package mp4box {
     BoxFactory --> FileBox : creates 
     BoxFactory --> CollectionBaseBox : creates 
     BoxFactory --> CollectionFullBox  : creates 
+
+    CollectionBaseBox --> Box : contains
+    CollectionFullBox --> Box : contains
 }
 package Reader {
     Consumer --> BoxReader : Instantiates, Reads
