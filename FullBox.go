@@ -1,12 +1,15 @@
 package mp4box
 
-import "fmt"
+import (
+	"encoding/binary"
+	"fmt"
+)
 
 //FullBox - Base box holding the bytes
 /*
 aligned(8) class FullBox(unsigned int(32) boxtype, unsigned int(8) v, bit(24) f) extends Box(boxtype) {
-unsigned int(8) version = v;
-bit(24) flags = f;
+	unsigned int(8) version = v;
+	bit(24) flags = f;
 }
 */
 type FullBox struct {
@@ -48,11 +51,13 @@ func (b *FullBox) Version() int8 {
 }
 
 //Flags - Returns flags
-func (b *FullBox) Flags() []uint8 {
-	var ret []uint8
+// bit(24) - fit to lower 24 bits of uint32
+func (b *FullBox) Flags() uint32 {
+	var ret uint32
 	p := b.BaseBox.getPayload()
 	if len(p) >= 5 {
-		return p[1:4]
+		buf := []byte{p[1], p[2], p[3], 0}
+		ret = binary.BigEndian.Uint32(buf)
 	}
 	//Improper Box
 	return ret
