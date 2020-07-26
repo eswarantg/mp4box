@@ -28,21 +28,34 @@ func (b *FullBox) GetFullBox() (*FullBox, error) {
 
 //getPayload - Returns the payload excluding headers
 func (b *FullBox) getPayload() []byte {
-	return (*b.payload)[4:]
+	var ret []byte
+	p := b.BaseBox.getPayload()
+	if len(p) >= 5 {
+		return p[4:]
+	}
+	return ret
 }
 
 //Version - returns the version of the box
 func (b *FullBox) Version() int8 {
 	var ret int8
 	p := b.BaseBox.getPayload()
-	ret = int8(p[0])
+	if len(p) >= 1 {
+		return int8(p[0])
+	}
+	//Improper Box
 	return ret
 }
 
 //Flags - Returns flags
 func (b *FullBox) Flags() []uint8 {
+	var ret []uint8
 	p := b.BaseBox.getPayload()
-	return p[1:4]
+	if len(p) >= 5 {
+		return p[1:4]
+	}
+	//Improper Box
+	return ret
 }
 
 //String - Returns User Readable description of content

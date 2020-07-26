@@ -31,21 +31,24 @@ func (b *FileBox) GetFileBox() (*FileBox, error) {
 
 //MajorBrand - returns the major brand of the file
 func (b *FileBox) MajorBrand() string {
+	var ret string
 	p := b.BaseBox.getPayload()
 	if p != nil && len(p) >= 4 {
-		ret := string(p[0:4])
-		return ret
+		ret = string(p[0:4])
 	}
-	return ""
+	//Improper box
+	return ret
 }
 
 //MinorVersion - returns the minor version of the file
 func (b *FileBox) MinorVersion() uint32 {
+	var ret uint32
 	p := b.BaseBox.getPayload()
 	if p != nil && len(p) >= 8 {
-		ret := binary.BigEndian.Uint32(p[4:8])
+		ret = binary.BigEndian.Uint32(p[4:8])
 		return ret
 	}
+	//Improper box
 	return 0
 }
 
@@ -58,10 +61,16 @@ func (b *FileBox) CompatibleBrands() []string {
 		ret = make([]string, nEntries)
 		bytesRead := 8
 		for i := 0; i < nEntries; i++ {
-			ret[i] = string(p[bytesRead : bytesRead+4])
-			bytesRead += 4
+			if len(p) >= bytesRead+4 {
+				ret[i] = string(p[bytesRead : bytesRead+4])
+				bytesRead += 4
+			} else {
+				//Improper box
+				break
+			}
 		}
 	}
+	//Improper box
 	return ret
 }
 

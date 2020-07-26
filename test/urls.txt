@@ -13,3 +13,5 @@ https://livesim.dashif.org/dash/vod/testpic_2s/sub_eng/1.m4s
 https://livesim.dashif.org/dash/vod/testpic_2s/V300/2.m4s
 https://livesim.dashif.org/dash/vod/testpic_2s/A48/2.m4s
 https://livesim.dashif.org/dash/vod/testpic_2s/sub_eng/2.m4s
+
+http://download.tsi.telecom-paristech.fr/gpac/DASH_CONFORMANCE/TelecomParisTech/mp4-onDemand/mp4-onDemand-h264bl_low.mp4

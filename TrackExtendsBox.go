@@ -34,8 +34,13 @@ func (b *TrackExtendsBox) GetMTrackHeaderBox() (*TrackExtendsBox, error) {
 
 //TrackID - Returns TrackID
 func (b *TrackExtendsBox) TrackID() uint32 {
+	var ret uint32
 	p := b.FullBox.getPayload()
-	return binary.BigEndian.Uint32(p[0:4])
+	if len(p) >= 4 {
+		return binary.BigEndian.Uint32(p[0:4])
+	}
+	//Improper box
+	return ret
 }
 
 //String - Display

@@ -93,7 +93,11 @@ func (b *BaseBox) Size() int64 {
 
 //getPayload - Returns the payload excluding headers
 func (b *BaseBox) getPayload() []byte {
-	return *b.payload
+	var ret []byte
+	if b.payload != nil {
+		return *b.payload
+	}
+	return ret
 }
 
 func (b *BaseBox) leadString() string {

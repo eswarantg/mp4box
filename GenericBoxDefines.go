@@ -12,27 +12,6 @@ type MediaDataBox struct {
 	BaseBox
 }
 
-//MediaHeaderBox -
-/*
-aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) { if (version==1) {
-      unsigned int(64)  creation_time;
-      unsigned int(64)  modification_time;
-      unsigned int(32)  timescale;
-      unsigned int(64)  duration;
-   } else { // version==0
-      unsigned int(32)  creation_time;
-      unsigned int(32)  modification_time;
-      unsigned int(32)  timescale;
-      unsigned int(32)  duration;
-}
-bit(1) pad=0;
-unsigned int(5)[3] language; // ISO-639-2/T language code unsigned int(16) pre_defined = 0;
-}
-*/
-type MediaHeaderBox struct {
-	FullBox
-}
-
 //HandlerBox -
 /*
 aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) { unsigned int(32) pre_defined = 0;
@@ -348,17 +327,6 @@ aligned(8) class MovieExtendsHeaderBox extends FullBox(‘mehd’, version, 0) {
 }
 */
 type MovieExtendsHeaderBox struct {
-	FullBox
-}
-
-//TrackFragmentHeaderBox -
-/*
-aligned(8) class TrackFragmentHeaderBox extends FullBox(‘tfhd’, 0, tf_flags){
-unsigned int(32) track_ID;
-// all the following are optional fields unsigned int(64) base_data_offset; unsigned int(32) sample_description_index; unsigned int(32) default_sample_duration; unsigned int(32) default_sample_size; unsigned int(32) default_sample_flags
-}
-*/
-type TrackFragmentHeaderBox struct {
 	FullBox
 }
 

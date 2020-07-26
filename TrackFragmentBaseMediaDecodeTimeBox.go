@@ -35,18 +35,24 @@ func (b *TrackFragmentBaseMediaDecodeTimeBox) GetTrackFragmentBaseMediaDecodeTim
 
 //BaseMediaDecodeTime - Duration of the media
 func (b *TrackFragmentBaseMediaDecodeTimeBox) BaseMediaDecodeTime(timescale uint32) time.Duration {
+	var ret time.Duration
 	p := b.FullBox.getPayload()
 	switch b.FullBox.Version() {
 	case 0:
-		ticks := binary.BigEndian.Uint32(p[0:4])
-		secs := float64(ticks) / float64(timescale)
-		return time.Duration(secs*1000000) * time.Microsecond
+		if len(p) >= 4 {
+			ticks := binary.BigEndian.Uint32(p[0:4])
+			secs := float64(ticks) / float64(timescale)
+			return time.Duration(secs*1000000) * time.Microsecond
+		}
 	case 1:
-		ticks := binary.BigEndian.Uint64(p[0:8])
-		secs := float64(ticks) / float64(timescale)
-		return time.Duration(secs*1000000) * time.Microsecond
+		if len(p) >= 8 {
+			ticks := binary.BigEndian.Uint64(p[0:8])
+			secs := float64(ticks) / float64(timescale)
+			return time.Duration(secs*1000000) * time.Microsecond
+		}
 	}
-	return 0
+	//Improper Box
+	return ret
 }
 
 //String - Display

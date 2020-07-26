@@ -30,8 +30,12 @@ func (b *MovieFragmentHeaderBox) GetMovieFragmentHeaderBox() (*MovieFragmentHead
 
 //SequenceNumber - Segment sequence number
 func (b *MovieFragmentHeaderBox) SequenceNumber() uint32 {
+	var ret uint32
 	p := b.FullBox.getPayload()
-	return binary.BigEndian.Uint32(p[0:4])
+	if len(p) >= 4 {
+		return binary.BigEndian.Uint32(p[0:4])
+	}
+	return ret
 }
 
 //String - Display
