@@ -25,6 +25,8 @@ type Box interface {
 	Write(io.Writer) error
 	//Returns BoxType of the Box
 	Boxtype() string
+	//Returns Size of the Box
+	Size() int64
 	//User Readable description of content
 	String() string
 	//GetParentByName() returns Box interface of Box by name in heirachy
