@@ -109,19 +109,19 @@ func (b *MovieHeaderBox) Duration() time.Duration {
 	switch b.FullBox.Version() {
 	case 0:
 		if len(p) >= 16 {
-			scale := binary.BigEndian.Uint32(p[8:12])
+			timescale := binary.BigEndian.Uint32(p[8:12])
 			dur := binary.BigEndian.Uint32(p[12:16])
-			if scale != 0 {
-				secs := float64(dur) / float64(scale)
+			if timescale != 0 {
+				secs := float64(dur) / float64(timescale)
 				return time.Duration(secs*1000000) * time.Microsecond
 			}
 		}
 	case 1:
 		if len(p) >= 28 {
-			scale := binary.BigEndian.Uint32(p[16:20])
+			timescale := binary.BigEndian.Uint32(p[16:20])
 			dur := binary.BigEndian.Uint64(p[20:28])
-			if scale != 0 {
-				secs := float64(dur) / float64(scale)
+			if timescale != 0 {
+				secs := float64(dur) / float64(timescale)
 				return time.Duration(secs*1000000) * time.Microsecond
 			}
 		}
@@ -221,8 +221,8 @@ func (b *MovieHeaderBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
-	ret += fmt.Sprintf(" Creation:%v Modification:%v Duration:%v TimeScale:%v Rate:%v Volume:%v UnityMatrix:%v NextTrackID:%v",
-		b.CreationTime(), b.ModificationTime(), b.Duration(), b.TimeScale(), b.Rate(),
+	ret += fmt.Sprintf(" Creation:%v Modification:%v TimeScale:%v Duration:%v Rate:%v Volume:%v UnityMatrix:%v NextTrackID:%v",
+		b.CreationTime(), b.ModificationTime(), b.TimeScale(), b.Duration(), b.Rate(),
 		b.Volume(), b.UnityMatrix(), b.NextTrackID())
 	return ret
 }

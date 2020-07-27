@@ -77,34 +77,51 @@ func (b *TrackHeaderBox) ModificationTime() time.Time {
 	p := b.FullBox.getPayload()
 	switch b.FullBox.Version() {
 	case 0:
-		secs := binary.BigEndian.Uint32(p[4:8])
-		return ret.Add(time.Duration(secs) * time.Second)
+		if len(p) >= 8 {
+			secs := binary.BigEndian.Uint32(p[4:8])
+			return ret.Add(time.Duration(secs) * time.Second)
+		}
 	case 1:
-		secs := binary.BigEndian.Uint64(p[8:16])
-		return ret.Add(time.Duration(secs) * time.Second)
+		if len(p) >= 16 {
+			secs := binary.BigEndian.Uint64(p[8:16])
+			return ret.Add(time.Duration(secs) * time.Second)
+		}
+	}
+	//Improper box
+	return ret
+}
+
+//TrackID - TrackID of the content
+func (b *TrackHeaderBox) TrackID() uint32 {
+	var ret uint32
+	p := b.FullBox.getPayload()
+	switch b.FullBox.Version() {
+	case 0:
+		if len(p) >= 12 {
+			return binary.BigEndian.Uint32(p[8:12])
+		}
+	case 1:
+		if len(p) >= 20 {
+			return binary.BigEndian.Uint32(p[16:20])
+		}
 	}
 	//Improper box
 	return ret
 }
 
 //Duration - Duration of the content
-func (b *TrackHeaderBox) Duration(scale uint32) time.Duration {
-	var ret time.Duration
+func (b *TrackHeaderBox) Duration() uint64 {
+	var ret uint64
 	p := b.FullBox.getPayload()
-	if scale != 0 {
-		switch b.FullBox.Version() {
-		case 0:
-			if len(p) >= 20 {
-				dur := binary.BigEndian.Uint32(p[16:20])
-				secs := float64(dur) / float64(scale)
-				return time.Duration(secs*1000000) * time.Microsecond
-			}
-		case 1:
-			if len(p) >= 32 {
-				dur := binary.BigEndian.Uint64(p[24:32])
-				secs := float64(dur) / float64(scale)
-				return time.Duration(secs*1000000) * time.Microsecond
-			}
+	//Gap reserved 4 bytes
+	switch b.FullBox.Version() {
+	case 0:
+		if len(p) >= 20 {
+			return uint64(binary.BigEndian.Uint32(p[16:20]))
+		}
+	case 1:
+		if len(p) >= 32 {
+			return (binary.BigEndian.Uint64(p[24:32]))
 		}
 	}
 	//Improper box
@@ -242,8 +259,8 @@ func (b *TrackHeaderBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
-	ret += fmt.Sprintf(" Creation:%v Modification:%v Duration:%v Layer:%v, AlternateGroup: %v, Volume:%v, UnityMatrix:%v, Width:%v, Height:%v",
-		b.CreationTime(), b.ModificationTime(), b.Duration(90000),
+	ret += fmt.Sprintf(" Creation:%v Modification:%v TrackID:%v Duration:%v Layer:%v, AlternateGroup: %v, Volume:%v, UnityMatrix:%v, Width:%v, Height:%v",
+		b.CreationTime(), b.ModificationTime(), b.TrackID(), b.Duration(),
 		b.Layer(), b.AlernateGroup(), b.Volume(), b.UnityMatrix(), b.Width(), b.Height(),
 	)
 	return ret
