@@ -206,5 +206,12 @@ func (*naAccessBoxTypeImpl) GetTrackFragmentBaseMediaDecodeTimeBox() (*TrackFrag
 	return nil, ErrBoxNotFound
 }
 
+func (*naAccessBoxTypeImpl) GetMovieFragmentBox() (*MovieFragmentBox, error) {
+	return nil, ErrBoxNotFound
+}
+func (*naAccessBoxTypeImpl) GetMovieBox() (*MovieBox, error) {
+	return nil, ErrBoxNotFound
+}
+
 //BaseBox -
 func (*naAccessBoxTypeImpl) GetBaseBox() (*BaseBox, error) { return nil, ErrBoxNotFound }

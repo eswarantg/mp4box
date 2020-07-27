@@ -9,9 +9,12 @@ func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 	//collectionBaseBoxList
 	switch boxType {
 	//CollectionBaseBox - Begin
-	case "moov", "trak", "mdia", "minf", "dinf",
-		"stbl", "mvex",
-		"moof", "traf":
+	case "moov":
+		return &MovieBox{}
+	case "moof":
+		return &MovieFragmentBox{}
+	case "trak", "mdia", "minf", "dinf",
+		"stbl", "mvex", "traf":
 		return &CollectionBaseBox{}
 	//CollectionBaseBox - End
 	//CollectionFullBox - Begin

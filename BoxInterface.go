@@ -84,5 +84,7 @@ type Box interface {
 	GetSegmentIndexBox() (*SegmentIndexBox, error)
 	GetTrackFragmentBaseMediaDecodeTimeBox() (*TrackFragmentBaseMediaDecodeTimeBox, error)
 	//Default
+	GetMovieFragmentBox() (*MovieFragmentBox, error)
+	GetMovieBox() (*MovieBox, error)
 	GetBaseBox() (*BaseBox, error)
 }

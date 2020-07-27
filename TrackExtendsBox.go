@@ -25,8 +25,8 @@ func (b *TrackExtendsBox) getLeafBox() Box {
 	return b
 }
 
-//GetMTrackHeaderBox - Implement Box method for this object
-func (b *TrackExtendsBox) GetMTrackHeaderBox() (*TrackExtendsBox, error) {
+//GetTrackExtendsBox - Implement Box method for this object
+func (b *TrackExtendsBox) GetTrackExtendsBox() (*TrackExtendsBox, error) {
 	return b, nil
 }
 

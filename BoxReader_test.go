@@ -111,24 +111,41 @@ func getType(myvar interface{}) string {
 	return t.Name()
 }
 
-func testTrun(t *testing.T, box Box) {
-	var tbox Box
-	var scale uint32
-	var err error
-	scale = 90000
+var fragScale *uint32
 
-	tbox, err = box.GetChildByName("trun")
-	if err == nil {
-		trunbox, err := tbox.GetTrackRunBox()
-		if err == nil {
-			sampleDur := trunbox.TotalSampleDuration()
-			if sampleDur > 0 {
-				log.Printf("%v %v", sampleDur, scale)
-				dur := time.Duration(sampleDur*1000000/uint64(scale)) * time.Microsecond
-				log.Printf("%v", dur)
+func buildFragDuration(t *testing.T, box Box) *time.Duration {
+	var ret *time.Duration
+	var err error
+	var sidxbox *SegmentIndexBox
+	var moofbox *MovieFragmentBox
+	switch box.Boxtype() {
+	case "styp":
+		fragScale = nil
+		t.Logf("Fragment Start")
+	case "sidx":
+		if box != nil {
+			sidxbox, err = box.GetSegmentIndexBox()
+			if err == nil {
+				fragScale = new(uint32)
+				*fragScale = sidxbox.TimeScale()
+				t.Logf("Fragment Scale: %v", *fragScale)
+			}
+		}
+	case "moof":
+		if box != nil {
+			moofbox, err = box.GetMovieFragmentBox()
+			if err == nil {
+				dur := moofbox.TotalDuration()
+				if fragScale != nil {
+					secs := float64(dur) / float64(*fragScale)
+					ret = new(time.Duration)
+					*ret = time.Duration(int64(secs*1000000)) * time.Microsecond
+					t.Logf("Fragment Duration: (%v/%v) = %v", dur, *fragScale, *ret)
+				}
 			}
 		}
 	}
+	return ret
 }
 
 //HELPER - End
@@ -151,7 +168,11 @@ func TestReadBox1(t *testing.T) {
 			}
 			boxType := getType(box)
 			t.Logf("%v %v", boxType, box)
-			testTrun(t, box)
+			//Get TimeScale from sidx box
+			dur := buildFragDuration(t, box)
+			if dur != nil {
+				t.Logf("Fragment Duration : %v", dur)
+			}
 		}
 		t.Logf("*************** %v %v **********************", testno, name)
 	}

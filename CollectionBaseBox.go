@@ -56,9 +56,14 @@ func (b *CollectionBaseBox) initData(boxSize int64, boxType string, payload *[]b
 func (b *CollectionBaseBox) String() string {
 	var ret string
 	ret += b.BaseBox.String()
+	ret += b.detailString()
 	for _, child := range b.childBoxes {
 		ret += child.String()
 	}
+	return ret
+}
+func (b *CollectionBaseBox) detailString() string {
+	var ret string
 	return ret
 }
 
