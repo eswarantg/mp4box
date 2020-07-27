@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 //HELPER - Begin
@@ -110,6 +111,26 @@ func getType(myvar interface{}) string {
 	return t.Name()
 }
 
+func testTrun(t *testing.T, box Box) {
+	var tbox Box
+	var scale uint32
+	var err error
+	scale = 90000
+
+	tbox, err = box.GetChildByName("trun")
+	if err == nil {
+		trunbox, err := tbox.GetTrackRunBox()
+		if err == nil {
+			sampleDur := trunbox.TotalSampleDuration()
+			if sampleDur > 0 {
+				log.Printf("%v %v", sampleDur, scale)
+				dur := time.Duration(sampleDur*1000000/uint64(scale)) * time.Microsecond
+				log.Printf("%v", dur)
+			}
+		}
+	}
+}
+
 //HELPER - End
 func TestReadBox1(t *testing.T) {
 	loadURLs(t)
@@ -130,6 +151,7 @@ func TestReadBox1(t *testing.T) {
 			}
 			boxType := getType(box)
 			t.Logf("%v %v", boxType, box)
+			testTrun(t, box)
 		}
 		t.Logf("*************** %v %v **********************", testno, name)
 	}

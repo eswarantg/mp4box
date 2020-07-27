@@ -26,6 +26,23 @@ func (b *CollectionFullBox) isCollection() bool {
 	return true
 }
 
+//GetChildByName - Get child by name
+func (b *CollectionFullBox) GetChildByName(boxType string) (Box, error) {
+	_, ok := b.childBoxes[boxType]
+	if ok {
+		return b.childBoxes[boxType], nil
+	}
+	for _, childBox := range b.childBoxes {
+		if childBox.isCollection() {
+			box, err := childBox.GetChildByName(boxType)
+			if err == nil {
+				return box, nil
+			}
+		}
+	}
+	return nil, ErrBoxNotFound
+}
+
 //Interface methods Impl - End
 //NewBaseBox - Create a new base box
 func (b *CollectionFullBox) initData(boxSize int64, boxType string, payload *[]byte, parent Box) error {

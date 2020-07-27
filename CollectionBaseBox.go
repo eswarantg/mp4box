@@ -30,7 +30,7 @@ func (b *CollectionBaseBox) GetChildByName(boxType string) (Box, error) {
 	for _, childBox := range b.childBoxes {
 		if childBox.isCollection() {
 			box, err := childBox.GetChildByName(boxType)
-			if err != nil {
+			if err == nil {
 				return box, nil
 			}
 		}
