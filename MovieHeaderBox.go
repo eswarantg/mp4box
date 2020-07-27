@@ -84,8 +84,8 @@ func (b *MovieHeaderBox) ModificationTime() time.Time {
 	return ret
 }
 
-//Scale - Ticks per second for all Timing info
-func (b *MovieHeaderBox) Scale() uint32 {
+//TimeScale - Ticks per second for all Timing info
+func (b *MovieHeaderBox) TimeScale() uint32 {
 	var ret uint32
 	p := b.FullBox.getPayload()
 	switch b.FullBox.Version() {
@@ -221,8 +221,8 @@ func (b *MovieHeaderBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
-	ret += fmt.Sprintf(" Creation:%v Modification:%v Duration:%v Rate:%v Volume:%v UnityMatrix:%v NextTrackID:%v",
-		b.CreationTime(), b.ModificationTime(), b.Duration(), b.Rate(),
+	ret += fmt.Sprintf(" Creation:%v Modification:%v Duration:%v TimeScale:%v Rate:%v Volume:%v UnityMatrix:%v NextTrackID:%v",
+		b.CreationTime(), b.ModificationTime(), b.Duration(), b.TimeScale(), b.Rate(),
 		b.Volume(), b.UnityMatrix(), b.NextTrackID())
 	return ret
 }
