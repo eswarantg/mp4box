@@ -80,8 +80,8 @@ func (b *MediaHeaderBox) ModificationTime() time.Time {
 	return ret
 }
 
-//Scale - Ticks per second for all Timing info
-func (b *MediaHeaderBox) Scale() uint32 {
+//TimeScale - Ticks per second for all Timing info
+func (b *MediaHeaderBox) TimeScale() uint32 {
 	var ret uint32
 	p := b.FullBox.getPayload()
 	switch b.FullBox.Version() {
@@ -99,27 +99,17 @@ func (b *MediaHeaderBox) Scale() uint32 {
 }
 
 //Duration - Duration of the content
-func (b *MediaHeaderBox) Duration() time.Duration {
-	var ret time.Duration
+func (b *MediaHeaderBox) Duration() uint64 {
+	var ret uint64
 	p := b.FullBox.getPayload()
 	switch b.FullBox.Version() {
 	case 0:
 		if len(p) >= 16 {
-			scale := binary.BigEndian.Uint32(p[8:12])
-			dur := binary.BigEndian.Uint32(p[12:16])
-			if scale != 0 {
-				secs := float64(dur) / float64(scale)
-				return time.Duration(secs*1000000) * time.Microsecond
-			}
+			return uint64(binary.BigEndian.Uint32(p[12:16]))
 		}
 	case 1:
 		if len(p) >= 28 {
-			scale := binary.BigEndian.Uint32(p[16:20])
-			dur := binary.BigEndian.Uint64(p[20:28])
-			if scale != 0 {
-				secs := float64(dur) / float64(scale)
-				return time.Duration(secs*1000000) * time.Microsecond
-			}
+			return binary.BigEndian.Uint64(p[20:28])
 		}
 	}
 	//Improper box
@@ -149,13 +139,13 @@ func (b *MediaHeaderBox) Language() string {
 	return ret
 }
 
-//String - Display
+//String - Returns User Readable description of content
 func (b *MediaHeaderBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
-	ret += fmt.Sprintf(" Creation:%v Modification:%v Duration:%v Language:%v",
-		b.CreationTime(), b.ModificationTime(), b.Duration(),
+	ret += fmt.Sprintf(" Creation:%v Modification:%v TimeScale:%v Duration:%v Language:%v",
+		b.CreationTime(), b.ModificationTime(), b.TimeScale(), b.Duration(),
 		b.Language(),
 	)
 	return ret

@@ -7,7 +7,7 @@ import (
 //CollectionFullBox - Collection of boxes
 type CollectionFullBox struct {
 	FullBox
-	childBoxes map[string]Box
+	childBoxMap map[string][]Box
 }
 
 //Interface methods Impl - Begin
@@ -26,52 +26,46 @@ func (b *CollectionFullBox) isCollection() bool {
 	return true
 }
 
-//GetChildByName - Get child by name
-func (b *CollectionFullBox) GetChildByName(boxType string) (Box, error) {
-	_, ok := b.childBoxes[boxType]
-	if ok {
-		return b.childBoxes[boxType], nil
-	}
-	for _, childBox := range b.childBoxes {
-		if childBox.isCollection() {
-			box, err := childBox.GetChildByName(boxType)
-			if err == nil {
-				return box, nil
-			}
-		}
-	}
-	return nil, ErrBoxNotFound
+//GetChildrenByName - Get child by name
+func (b *CollectionFullBox) GetChildrenByName(boxType string) ([]Box, error) {
+	return getChildBoxHelper(b.childBoxMap, boxType)
 }
 
 //Interface methods Impl - End
 //NewBaseBox - Create a new base box
 func (b *CollectionFullBox) initData(boxSize int64, boxType string, payload *[]byte, parent Box) error {
-	b.FullBox.initData(boxSize, boxType, nil, parent)
-	b.childBoxes = make(map[string]Box)
-	b.populateChildBoxes(payload)
-	return nil
+	var err error
+	b.childBoxMap = make(map[string][]Box)
+	if payload != nil && len(*payload) >= 5 {
+		fullboxpayload := (*payload)[0:4]
+		err = b.FullBox.initData(boxSize, boxType, &fullboxpayload, parent)
+	}
+	if err == nil && payload != nil && len(*payload) >= 6 {
+		childpayload := (*payload)[4:]
+		return b.populateChildBoxes(&childpayload)
+	}
+	return err
 }
 
+//String - Returns User Readable description of content
 func (b *CollectionFullBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
-	for _, child := range b.childBoxes {
-		ret += child.String()
-	}
+	ret += b.detailString()
+	ret += getChildBoxString(b.childBoxMap)
+	return ret
+}
+
+func (b *CollectionFullBox) detailString() string {
+	var ret string
 	return ret
 }
 
 func (b *CollectionFullBox) populateChildBoxes(payload *[]byte) error {
 	if payload != nil {
 		r := bytes.NewReader(*payload)
-		decoder := newBoxReader(r, b)
-		for {
-			box, err := decoder.NextBox()
-			if err != nil {
-				return err
-			}
-			b.childBoxes[box.Boxtype()] = box
-		}
+		reader := newBoxReader(r, b)
+		return populateChildBoxesHelper(b.childBoxMap, reader)
 	}
 	return nil
 }

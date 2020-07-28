@@ -74,6 +74,7 @@ func (b *FileBox) CompatibleBrands() []string {
 	return ret
 }
 
+//String - Returns User Readable description of content
 func (b *FileBox) String() string {
 	var ret string
 	ret += b.BaseBox.String()

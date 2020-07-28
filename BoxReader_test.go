@@ -111,36 +111,66 @@ func getType(myvar interface{}) string {
 	return t.Name()
 }
 
-var fragScale *uint32
+var timeScale *uint32
+var trackID *uint32
 
-func buildFragDuration(t *testing.T, box Box) *time.Duration {
+func buildChunkDuration(t *testing.T, box Box) *time.Duration {
 	var ret *time.Duration
 	var err error
-	var sidxbox *SegmentIndexBox
-	var moofbox *MovieFragmentBox
 	switch box.Boxtype() {
-	case "styp":
-		fragScale = nil
-		t.Logf("Fragment Start")
+	case "ftyp":
+		timeScale = nil
+		t.Logf("Chunk Restart")
 	case "sidx":
 		if box != nil {
+			var sidxbox *SegmentIndexBox
 			sidxbox, err = box.GetSegmentIndexBox()
 			if err == nil {
-				fragScale = new(uint32)
-				*fragScale = sidxbox.TimeScale()
-				t.Logf("Fragment Scale: %v", *fragScale)
+				timeScale = new(uint32)
+				*timeScale = sidxbox.TimeScale()
+				t.Logf("Chunk Time Scale: %v", *timeScale)
+			}
+		}
+	case "moov":
+		if box != nil {
+			var moovbox *MovieBox
+			moovbox, err = box.GetMovieBox()
+			if err == nil {
+				duration, ts, tid := moovbox.Summary()
+				if ts > 0 {
+					timeScale = new(uint32)
+					*timeScale = ts
+					t.Logf("Chunk Time Scale: %v", *timeScale)
+				}
+				trackID = new(uint32)
+				*trackID = tid
+				if duration > 0 {
+					if timeScale != nil {
+						dur := time.Duration(uint64(float64(duration)*1000000/float64(*timeScale))) * time.Microsecond
+						t.Logf("Chunk Time Scale: %v %v/%v %v", *trackID, duration, *timeScale, dur)
+						return &dur
+					}
+				}
 			}
 		}
 	case "moof":
 		if box != nil {
+			var moofbox *MovieFragmentBox
 			moofbox, err = box.GetMovieFragmentBox()
 			if err == nil {
-				dur := moofbox.TotalDuration()
-				if fragScale != nil {
-					secs := float64(dur) / float64(*fragScale)
-					ret = new(time.Duration)
-					*ret = time.Duration(int64(secs*1000000)) * time.Microsecond
-					t.Logf("Fragment Duration: (%v/%v) = %v", dur, *fragScale, *ret)
+				duration, ts, tid, _ := moofbox.Summary()
+				if ts > 0 {
+					timeScale = new(uint32)
+					*timeScale = ts
+				}
+				trackID = new(uint32)
+				*trackID = tid
+				if duration > 0 {
+					if timeScale != nil {
+						dur := time.Duration(uint64(float64(duration)*1000000/float64(*timeScale))) * time.Microsecond
+						t.Logf("Chunk Time Scale: %v %v/%v %v", *trackID, duration, *timeScale, dur)
+						return &dur
+					}
 				}
 			}
 		}
@@ -169,9 +199,9 @@ func TestReadBox1(t *testing.T) {
 			boxType := getType(box)
 			t.Logf("%v %v", boxType, box)
 			//Get TimeScale from sidx box
-			dur := buildFragDuration(t, box)
+			dur := buildChunkDuration(t, box)
 			if dur != nil {
-				t.Logf("Fragment Duration : %v", dur)
+				t.Logf("Chunk Duration : %v", dur)
 			}
 		}
 		t.Logf("*************** %v %v **********************", testno, name)

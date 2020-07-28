@@ -103,27 +103,17 @@ func (b *MovieHeaderBox) TimeScale() uint32 {
 }
 
 //Duration - Duration of the content
-func (b *MovieHeaderBox) Duration() time.Duration {
-	var ret time.Duration
+func (b *MovieHeaderBox) Duration() uint64 {
+	var ret uint64
 	p := b.FullBox.getPayload()
 	switch b.FullBox.Version() {
 	case 0:
 		if len(p) >= 16 {
-			timescale := binary.BigEndian.Uint32(p[8:12])
-			dur := binary.BigEndian.Uint32(p[12:16])
-			if timescale != 0 {
-				secs := float64(dur) / float64(timescale)
-				return time.Duration(secs*1000000) * time.Microsecond
-			}
+			return uint64(binary.BigEndian.Uint32(p[12:16]))
 		}
 	case 1:
 		if len(p) >= 28 {
-			timescale := binary.BigEndian.Uint32(p[16:20])
-			dur := binary.BigEndian.Uint64(p[20:28])
-			if timescale != 0 {
-				secs := float64(dur) / float64(timescale)
-				return time.Duration(secs*1000000) * time.Microsecond
-			}
+			return binary.BigEndian.Uint64(p[20:28])
 		}
 	}
 	//Improper box

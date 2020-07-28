@@ -55,7 +55,7 @@ func (b *FullBox) Version() int8 {
 func (b *FullBox) Flags() uint32 {
 	var ret uint32
 	p := b.BaseBox.getPayload()
-	if len(p) >= 5 {
+	if len(p) >= 4 {
 		buf := []byte{p[1], p[2], p[3], 0}
 		ret = binary.BigEndian.Uint32(buf)
 	}

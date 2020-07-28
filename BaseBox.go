@@ -50,8 +50,8 @@ func (b *BaseBox) GetParentByName(boxType string) (Box, error) {
 	return nil, ErrBoxNotFound
 }
 
-//GetChildByName - Get child by name
-func (b *BaseBox) GetChildByName(boxType string) (Box, error) {
+//GetChildrenByName - Get child by name
+func (b *BaseBox) GetChildrenByName(boxType string) ([]Box, error) {
 	return nil, ErrBoxNotFound
 }
 

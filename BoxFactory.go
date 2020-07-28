@@ -22,7 +22,7 @@ func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 		return &CollectionFullBox{}
 	//CollectionFullBox - End
 	//CollectionFullBoxCounted - Begin
-	case "YYYY":
+	case "stsd", "dref":
 		return &CollectionFullBoxCounted{}
 	//CollectionFullBoxCounted - End
 	//Standalone boxes - Begin
@@ -54,8 +54,6 @@ func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 		return new(TimeToSampleBox)
 	case "ctts":
 		return new(CompositionOffsetBox)
-	case "stsd":
-		return new(SampleDescriptionBox)
 	case "stsz":
 		return new(SampleSizeBox)
 	case "stz2":

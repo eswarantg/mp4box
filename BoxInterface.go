@@ -30,7 +30,7 @@ type Box interface {
 	//User Readable description of content
 	String() string
 	//GetParentByName() returns Box interface of Box by name in heirachy
-	GetChildByName(boxType string) (Box, error)
+	GetChildrenByName(boxType string) ([]Box, error)
 	//GetParentByName() returns Box interface of Box by name in heirachy
 	GetParentByName(boxType string) (Box, error)
 

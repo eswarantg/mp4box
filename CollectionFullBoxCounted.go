@@ -3,6 +3,7 @@ package mp4box
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 )
 
 //CollectionFullBoxCounted - Collection of boxes
@@ -17,7 +18,8 @@ extends FullBox(xxxx, version = 0, 0) {
 */
 type CollectionFullBoxCounted struct {
 	FullBox
-	childBoxes map[string]Box
+	counter     uint32
+	childBoxMap map[string][]Box
 }
 
 //Interface methods Impl - Begin
@@ -36,58 +38,48 @@ func (b *CollectionFullBoxCounted) isCollection() bool {
 	return true
 }
 
-//GetChildByName - Get child by name
-func (b *CollectionFullBoxCounted) GetChildByName(boxType string) (Box, error) {
-	_, ok := b.childBoxes[boxType]
-	if ok {
-		return b.childBoxes[boxType], nil
-	}
-	for _, childBox := range b.childBoxes {
-		if childBox.isCollection() {
-			box, err := childBox.GetChildByName(boxType)
-			if err == nil {
-				return box, nil
-			}
-		}
-	}
-	return nil, ErrBoxNotFound
+//GetChildrenByName - Get child by name
+func (b *CollectionFullBoxCounted) GetChildrenByName(boxType string) ([]Box, error) {
+	return getChildBoxHelper(b.childBoxMap, boxType)
 }
 
 //Interface methods Impl - End
 //NewBaseBox - Create a new base box
 func (b *CollectionFullBoxCounted) initData(boxSize int64, boxType string, payload *[]byte, parent Box) error {
-	b.FullBox.initData(boxSize, boxType, nil, parent)
-	b.childBoxes = make(map[string]Box)
-	b.populateChildBoxes(payload)
-	return nil
+	var err error
+	b.childBoxMap = make(map[string][]Box)
+	if payload != nil && len(*payload) >= 4 {
+		fullboxpayload := (*payload)[0:4]
+		err = b.FullBox.initData(boxSize, boxType, &fullboxpayload, parent)
+	}
+	if err == nil && payload != nil && len(*payload) >= 8 {
+		childpayload := (*payload)[4:]
+		return b.populateChildBoxes(&childpayload)
+	}
+	return err
+
 }
 
 func (b *CollectionFullBoxCounted) String() string {
 	var ret string
 	ret += b.FullBox.String()
-	for _, child := range b.childBoxes {
-		ret += child.String()
-	}
+	ret += b.detailString()
+	ret += getChildBoxString(b.childBoxMap)
+	return ret
+}
+func (b *CollectionFullBoxCounted) detailString() string {
+	var ret string
+	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
+	ret += fmt.Sprintf(" Count:%v ", b.counter)
 	return ret
 }
 
 func (b *CollectionFullBoxCounted) populateChildBoxes(payload *[]byte) error {
-	var err error
 	if payload != nil {
-		counter := binary.BigEndian.Uint32(*payload)
-		r := bytes.NewReader(*payload)
-		decoder := newBoxReader(r, b)
-		for {
-			var box Box
-			box, err = decoder.NextBox()
-			if err != nil {
-				break
-			}
-			b.childBoxes[box.Boxtype()] = box
-		}
-		if int(counter) != len(b.childBoxes) {
-			return err
-		}
+		b.counter = binary.BigEndian.Uint32(*payload)
+		r := bytes.NewReader((*payload)[4:])
+		reader := newBoxReader(r, b)
+		return populateChildBoxesHelper(b.childBoxMap, reader)
 	}
 	return nil
 }

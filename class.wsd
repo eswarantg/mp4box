@@ -4,7 +4,7 @@ package mp4box {
         .. Content Access ..
         + Boxtype(): string
         + String(): string
-        + GetChildByName(boxType string) (Box, error)
+        + GetChildrenByName(boxType string) ([]Box, error)
         + GetParentByName(boxType string) (Box, error)
         + Write(io.Writer) error
         .. Box Access ..
@@ -62,6 +62,6 @@ package mp4box {
 }
 package Reader {
     Consumer --> BoxReader : Instantiates, Reads
-    Consumer --> Box : GetXXXBox, GetChildByName, GetParentByName
+    Consumer --> Box : GetXXXBox, GetChildrenByName, GetParentByName
 }
 @endumlss
