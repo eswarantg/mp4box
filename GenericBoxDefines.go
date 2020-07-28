@@ -12,18 +12,6 @@ type MediaDataBox struct {
 	BaseBox
 }
 
-//HandlerBox -
-/*
-aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) { unsigned int(32) pre_defined = 0;
-unsigned int(32) handler_type;
-const unsigned int(32)[3] reserved = 0;
-   string   name;
-}
-*/
-type HandlerBox struct {
-	FullBox
-}
-
 //VideoMediaHeaderBox -
 /*
 aligned(8) class VideoMediaHeaderBox
@@ -69,25 +57,6 @@ extends FullBox(’nmhd’, version = 0, flags) {
 }
 */
 type NullMediaHeaderBox struct {
-	FullBox
-}
-
-//DataEntryURLBox -
-/*
-aligned(8) class DataEntryUrlBox (bit(24) flags) extends FullBox(‘url ’, version = 0, flags) { string location;
-}
-*/
-type DataEntryURLBox struct {
-	FullBox
-}
-
-//DataEntryUrnBox -
-/*
-aligned(8) class DataEntryUrnBox (bit(24) flags) extends FullBox(‘urn ’, version = 0, flags) { string name;
-string location;
-}
-*/
-type DataEntryUrnBox struct {
 	FullBox
 }
 

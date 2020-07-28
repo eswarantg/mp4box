@@ -10,6 +10,22 @@ import (
 
 var epochTimeMp4 time.Time
 
+func getNullTermString(p []byte) (string, int) {
+	var ret string
+	var i int
+	for i = 0; i < len(p); i++ {
+		if p[i] == 0 {
+			break
+		}
+	}
+	if i < len(p) {
+		ret = string(p[:i-1])
+	} else {
+		ret = string(p[:])
+	}
+	return ret, i
+}
+
 func init() {
 	var err error
 	epochTimeMp4, err = time.Parse(time.RFC3339, "1904-01-01T00:00:00Z")
