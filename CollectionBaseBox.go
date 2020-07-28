@@ -6,6 +6,7 @@ import (
 )
 
 func getChildBoxHelper(childBoxMap map[string][]Box, boxType string) ([]Box, error) {
+	ret := []Box{}
 	_, ok := childBoxMap[boxType]
 	if ok {
 		return childBoxMap[boxType], nil
@@ -14,11 +15,14 @@ func getChildBoxHelper(childBoxMap map[string][]Box, boxType string) ([]Box, err
 		for _, childBox := range childBoxes {
 			if childBox.isCollection() {
 				box, err := childBox.GetChildrenByName(boxType)
-				if err == nil {
-					return box, nil
+				if err == nil && len(box) > 0 {
+					ret = append(ret, box...)
 				}
 			}
 		}
+	}
+	if len(ret) > 0 {
+		return ret, nil
 	}
 	return nil, ErrBoxNotFound
 }

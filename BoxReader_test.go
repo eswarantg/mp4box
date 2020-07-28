@@ -144,7 +144,7 @@ func buildChunkDuration(t *testing.T, box Box) *time.Duration {
 				}
 				trackID = new(uint32)
 				*trackID = tid
-				if duration > 0 {
+				if duration > 0 && duration != 0xFFFFFFFFFFFFFFFF {
 					if timeScale != nil {
 						dur := time.Duration(uint64(float64(duration)*1000000/float64(*timeScale))) * time.Microsecond
 						t.Logf("Chunk Time Scale: %v %v/%v %v", *trackID, duration, *timeScale, dur)
@@ -165,7 +165,7 @@ func buildChunkDuration(t *testing.T, box Box) *time.Duration {
 				}
 				trackID = new(uint32)
 				*trackID = tid
-				if duration > 0 {
+				if duration > 0 && duration != 0xFFFFFFFFFFFFFFFF {
 					if timeScale != nil {
 						dur := time.Duration(uint64(float64(duration)*1000000/float64(*timeScale))) * time.Microsecond
 						t.Logf("Chunk Time Scale: %v %v/%v %v", *trackID, duration, *timeScale, dur)
