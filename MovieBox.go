@@ -48,13 +48,9 @@ func (b *MovieBox) TimeScale() uint32 {
 }
 
 //Summary - Returns summary of parameters
-func (b *MovieBox) Summary() (duration uint64, timescale uint32, trackID uint32) {
+func (b *MovieBox) Summary() (duration *uint64, timescale *uint32, trackID *uint32) {
 	var err error
 	var tboxes []Box
-
-	duration = 0
-	timescale = 0
-	trackID = 0
 
 	tboxes, err = b.GetChildrenByName("mvhd")
 	if tboxes != nil && err == nil {
@@ -63,12 +59,14 @@ func (b *MovieBox) Summary() (duration uint64, timescale uint32, trackID uint32)
 			mvhdbox, err = tbox.GetMovieHeaderBox()
 			if mvhdbox != nil && err == nil {
 				d := mvhdbox.Duration()
-				if d > 0 {
-					duration = d
+				if d > 0 && d != 0xFFFFFFFFFFFFFFFF {
+					duration = new(uint64)
+					*duration = d
 				}
 				ts := mvhdbox.TimeScale()
 				if ts > 0 {
-					timescale = ts
+					timescale = new(uint32)
+					*timescale = ts
 				}
 			}
 		}
@@ -80,27 +78,14 @@ func (b *MovieBox) Summary() (duration uint64, timescale uint32, trackID uint32)
 			tkhdbox, err = tbox.GetTrackHeaderBox()
 			if tkhdbox != nil && err == nil {
 				d := tkhdbox.Duration()
-				if d > 0 {
-					duration = d
+				if d > 0 && d != 0xFFFFFFFFFFFFFFFF {
+					if duration != nil {
+						duration = new(uint64)
+					}
+					*duration = d
 				}
-				trackID = tkhdbox.TrackID()
-			}
-		}
-	}
-	tboxes, err = b.GetChildrenByName("mdhd")
-	if tboxes != nil && err == nil {
-		var mdhdbox *MediaHeaderBox
-		for _, tbox := range tboxes {
-			mdhdbox, err = tbox.GetMediaHeaderBox()
-			if mdhdbox != nil && err == nil {
-				d := mdhdbox.Duration()
-				if d > 0 {
-					duration = d
-				}
-				ts := mdhdbox.TimeScale()
-				if ts > 0 {
-					timescale = ts
-				}
+				trackID = new(uint32)
+				*trackID = tkhdbox.TrackID()
 			}
 		}
 	}
@@ -112,6 +97,15 @@ func (b *MovieBox) detailString() string {
 	var ret string
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
 	duration, timescale, trackid := b.Summary()
-	ret += fmt.Sprintf(" Summary:%v %v %v", duration, timescale, trackid)
+	ret += fmt.Sprintf(" Summary:")
+	if duration != nil {
+		ret += fmt.Sprintf(" Duration:%v", *duration)
+	}
+	if timescale != nil {
+		ret += fmt.Sprintf(" Timescale:%v", *timescale)
+	}
+	if trackid != nil {
+		ret += fmt.Sprintf(" TrackID:%v", *trackid)
+	}
 	return ret
 }

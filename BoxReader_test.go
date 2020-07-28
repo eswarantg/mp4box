@@ -113,6 +113,8 @@ func getType(myvar interface{}) string {
 
 var timeScale *uint32
 var trackID *uint32
+var sequence *uint32
+var baseMediaDecodetime *uint64
 
 func buildChunkDuration(t *testing.T, box Box) *time.Duration {
 	var ret *time.Duration
@@ -126,7 +128,9 @@ func buildChunkDuration(t *testing.T, box Box) *time.Duration {
 			var sidxbox *SegmentIndexBox
 			sidxbox, err = box.GetSegmentIndexBox()
 			if err == nil {
-				timeScale = new(uint32)
+				if timeScale == nil {
+					timeScale = new(uint32)
+				}
 				*timeScale = sidxbox.TimeScale()
 				t.Logf("Chunk Time Scale: %v", *timeScale)
 			}
@@ -137,40 +141,75 @@ func buildChunkDuration(t *testing.T, box Box) *time.Duration {
 			moovbox, err = box.GetMovieBox()
 			if err == nil {
 				duration, ts, tid := moovbox.Summary()
-				if ts > 0 {
-					timeScale = new(uint32)
-					*timeScale = ts
+				if ts != nil {
+					if timeScale == nil {
+						timeScale = new(uint32)
+					}
+					*timeScale = *ts
 					t.Logf("Chunk Time Scale: %v", *timeScale)
 				}
-				trackID = new(uint32)
-				*trackID = tid
-				if duration > 0 && duration != 0xFFFFFFFFFFFFFFFF {
-					if timeScale != nil {
-						dur := time.Duration(uint64(float64(duration)*1000000/float64(*timeScale))) * time.Microsecond
-						t.Logf("Chunk Time Scale: %v %v/%v %v", *trackID, duration, *timeScale, dur)
-						return &dur
+				if tid != nil {
+					if trackID == nil {
+						trackID = new(uint32)
+					}
+					*trackID = *tid
+				}
+				if duration != nil {
+					if *duration > 0 && *duration != 0xFFFFFFFFFFFFFFFF {
+						if timeScale != nil {
+							dur := time.Duration(uint64(float64(*duration)*1000000/float64(*timeScale))) * time.Microsecond
+							t.Logf("Chunk Time Scale: %v %v/%v %v", *trackID, duration, *timeScale, dur)
+							return &dur
+						}
 					}
 				}
 			}
 		}
 	case "moof":
+		var lastSequence uint32
+		var lastBaseMediaDecodetime uint64
 		if box != nil {
 			var moofbox *MovieFragmentBox
 			moofbox, err = box.GetMovieFragmentBox()
 			if err == nil {
-				duration, ts, tid, _ := moofbox.Summary()
-				if ts > 0 {
-					timeScale = new(uint32)
-					*timeScale = ts
+				s, bmdt, tid, ts := moofbox.Summary()
+				if ts != nil {
+					if timeScale == nil {
+						timeScale = new(uint32)
+					}
+					*timeScale = *ts
+					t.Logf("Chunk Time Scale: %v", *timeScale)
 				}
-				trackID = new(uint32)
-				*trackID = tid
-				if duration > 0 && duration != 0xFFFFFFFFFFFFFFFF {
-					if timeScale != nil {
+				if tid != nil {
+					if trackID == nil {
+						trackID = new(uint32)
+					}
+					*trackID = *tid
+				}
+				if s != nil {
+					if sequence == nil {
+						sequence = new(uint32)
+					}
+					lastSequence = *sequence
+					*sequence = *s
+				}
+				if bmdt != nil {
+					if baseMediaDecodetime == nil {
+						baseMediaDecodetime = new(uint64)
+					}
+					lastBaseMediaDecodetime = *baseMediaDecodetime
+					*baseMediaDecodetime = *bmdt
+				}
+			}
+			if timeScale != nil && sequence != nil && baseMediaDecodetime != nil {
+				if *sequence == lastSequence+1 {
+					duration := *baseMediaDecodetime - lastBaseMediaDecodetime
+					if duration > 0 {
 						dur := time.Duration(uint64(float64(duration)*1000000/float64(*timeScale))) * time.Microsecond
 						t.Logf("Chunk Time Scale: %v %v/%v %v", *trackID, duration, *timeScale, dur)
 						return &dur
 					}
+
 				}
 			}
 		}

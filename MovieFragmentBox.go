@@ -36,15 +36,34 @@ func (b *MovieFragmentBox) GetChildrenByName(boxType string) ([]Box, error) {
 //Interface methods Impl - End
 
 //Summary - Returns summary of parameters
-func (b *MovieFragmentBox) Summary() (duration uint64, timescale uint32, trackID uint32, baseMediaDecodeTime uint64) {
+func (b *MovieFragmentBox) Summary() (sequenceNumber *uint32, baseMediaDecodeTime *uint64, trackID *uint32, timescale *uint32) {
 	var tboxes []Box
-	var sampleDuration *uint32
 	var err error
 
-	duration = 0
-	timescale = 0
-	trackID = 0
-	baseMediaDecodeTime = 0
+	//Get Sequence No from tfhd box
+	tboxes, err = b.GetChildrenByName("mfhd")
+	if tboxes != nil && err == nil {
+		var mfhdbox *MovieFragmentHeaderBox
+		for _, tbox := range tboxes {
+			mfhdbox, err = tbox.GetMovieFragmentHeaderBox()
+			if mfhdbox != nil && err == nil {
+				sequenceNumber = new(uint32)
+				*sequenceNumber = mfhdbox.SequenceNumber()
+			}
+		}
+	}
+	//Get the tfdt box
+	tboxes, err = b.GetChildrenByName("tfdt")
+	if tboxes != nil && err == nil {
+		var tfdtbox *TrackFragmentBaseMediaDecodeTimeBox
+		for _, tbox := range tboxes {
+			tfdtbox, err = tbox.GetTrackFragmentBaseMediaDecodeTimeBox()
+			if tfdtbox != nil && err == nil {
+				baseMediaDecodeTime = new(uint64)
+				*baseMediaDecodeTime = tfdtbox.BaseMediaDecodeTime()
+			}
+		}
+	}
 
 	//Get DefaultSampleDuration from tfhd box
 	tboxes, err = b.GetChildrenByName("tfhd")
@@ -53,46 +72,8 @@ func (b *MovieFragmentBox) Summary() (duration uint64, timescale uint32, trackID
 		for _, tbox := range tboxes {
 			tfhdbox, err = tbox.GetTrackFragmentHeaderBox()
 			if tfhdbox != nil && err == nil {
-				dur := tfhdbox.DefaultSampleDuration()
-				if dur > 0 {
-					sampleDuration = new(uint32)
-					*sampleDuration = dur
-				}
-				trackID = tfhdbox.TrackID()
-			}
-		}
-	}
-	//Get the tfdt box
-	tboxes, err = b.GetChildrenByName("tdft")
-	if tboxes != nil && err == nil {
-		var tfdtbox *TrackFragmentBaseMediaDecodeTimeBox
-		for _, tbox := range tboxes {
-			tfdtbox, err = tbox.GetTrackFragmentBaseMediaDecodeTimeBox()
-			if tfdtbox != nil && err == nil {
-				baseMediaDecodeTime = tfdtbox.BaseMediaDecodeTime()
-			}
-		}
-	}
-	//Get the trun box
-	tboxes, err = b.GetChildrenByName("trun")
-	if tboxes != nil && err == nil {
-		var trunbox *TrackRunBox
-		for _, tbox := range tboxes {
-			trunbox, err = tbox.GetTrackRunBox()
-			if err == nil {
-				//Get TotalSampleDuration = Sum of all SampleDuration
-				dur := trunbox.TotalSampleDuration()
-				if dur > 0 {
-					duration = dur
-				}
-				//Get SampleCount
-				count := trunbox.SampleCount()
-				if count > 0 {
-					if sampleDuration != nil {
-						//Get DefaultSampleDuration
-						duration = uint64(*sampleDuration) * uint64(count)
-					}
-				}
+				trackID = new(uint32)
+				*trackID = tfhdbox.TrackID()
 			}
 		}
 	}
@@ -102,10 +83,22 @@ func (b *MovieFragmentBox) Summary() (duration uint64, timescale uint32, trackID
 //String - Display
 func (b *MovieFragmentBox) detailString() string {
 	var ret string
+
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
-	duration, timescale, trackID, baseMediaDecodeTime := b.Summary()
-	ret += fmt.Sprintf(" Duration:%v TimeScale:%v TrackID:%v BaseMediaDecodeTime:%v",
-		duration, timescale, trackID, baseMediaDecodeTime,
-	)
+
+	sequenceNumber, baseMediaDecodeTime, trackID, timescale := b.Summary()
+	ret += fmt.Sprintf(" Summary:")
+	if sequenceNumber != nil {
+		ret += fmt.Sprintf(" SequenceNumber:%v", *sequenceNumber)
+	}
+	if baseMediaDecodeTime != nil {
+		ret += fmt.Sprintf(" BaseMediaDecodeTime:%v", *baseMediaDecodeTime)
+	}
+	if trackID != nil {
+		ret += fmt.Sprintf(" TrackID:%v", *trackID)
+	}
+	if timescale != nil {
+		ret += fmt.Sprintf(" Timescale:%v", *timescale)
+	}
 	return ret
 }
