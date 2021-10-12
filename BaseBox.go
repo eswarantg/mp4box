@@ -19,7 +19,7 @@ func getNullTermString(p []byte) (string, int) {
 		}
 	}
 	if i < len(p) {
-		ret = string(p[:i-1])
+		ret = string(p[:i])
 	} else {
 		ret = string(p[:])
 	}

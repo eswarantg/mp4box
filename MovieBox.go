@@ -97,7 +97,7 @@ func (b *MovieBox) detailString() string {
 	var ret string
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
 	duration, timescale, trackid := b.Summary()
-	ret += fmt.Sprintf(" Summary:")
+	ret += " Summary:"
 	if duration != nil {
 		ret += fmt.Sprintf(" Duration:%v", *duration)
 	}

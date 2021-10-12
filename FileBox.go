@@ -33,7 +33,7 @@ func (b *FileBox) GetFileBox() (*FileBox, error) {
 func (b *FileBox) MajorBrand() string {
 	var ret string
 	p := b.BaseBox.getPayload()
-	if p != nil && len(p) >= 4 {
+	if len(p) >= 4 {
 		ret = string(p[0:4])
 	}
 	//Improper box
@@ -44,7 +44,7 @@ func (b *FileBox) MajorBrand() string {
 func (b *FileBox) MinorVersion() uint32 {
 	var ret uint32
 	p := b.BaseBox.getPayload()
-	if p != nil && len(p) >= 8 {
+	if len(p) >= 8 {
 		ret = binary.BigEndian.Uint32(p[4:8])
 		return ret
 	}
@@ -56,8 +56,8 @@ func (b *FileBox) MinorVersion() uint32 {
 func (b *FileBox) CompatibleBrands() []string {
 	var ret []string
 	p := b.BaseBox.getPayload()
-	if p != nil && len(p) >= 12 {
-		nEntries := (len(p) - 12) / 4
+	if len(p) >= 8 {
+		nEntries := (len(p) - 8) / 4
 		ret = make([]string, nEntries)
 		bytesRead := 8
 		for i := 0; i < nEntries; i++ {

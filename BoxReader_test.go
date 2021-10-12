@@ -57,6 +57,10 @@ func loadURLs(t *testing.T) {
 			continue
 		}
 		filename := "test/" + strings.ReplaceAll(u.Hostname(), ".", "_") + strings.ReplaceAll(u.Path, "/", "_")
+		if len(filename) > 255 {
+			lastChars := 8
+			filename = filename[:255-lastChars-3] + "###" + filename[len(filename)-lastChars:]
+		}
 		_, err = os.Stat(filename)
 		if err == nil {
 			t.Logf("File exists. %s", filename)
@@ -103,8 +107,7 @@ func readMp4File(filename string) *BoxReader {
 }
 
 func getType(myvar interface{}) string {
-	var t reflect.Type
-	t = reflect.TypeOf(myvar)
+	t := reflect.TypeOf(myvar)
 	if t.Kind() == reflect.Ptr {
 		return "*" + t.Elem().Name()
 	}

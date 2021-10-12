@@ -116,6 +116,15 @@ func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 		return new(SegmentIndexBox)
 	case "tfdt":
 		return new(TrackFragmentBaseMediaDecodeTimeBox)
+		//mp4boxes
+	case "mp4v":
+		return new(MP4VisualSampleEntry)
+	case "mp4a":
+		return new(MP4AudioSampleEntry)
+	case "mp4s":
+		return new(MpegSampleEntry)
+	case "esds":
+		return new(ESDBox)
 	}
 	return new(BaseBox)
 }

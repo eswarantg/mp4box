@@ -86,5 +86,10 @@ type Box interface {
 	//Default
 	GetMovieFragmentBox() (*MovieFragmentBox, error)
 	GetMovieBox() (*MovieBox, error)
+
+	GetMP4VisualSampleEntry() (*MP4VisualSampleEntry, error)
+	GetMP4AudioSampleEntry() (*MP4AudioSampleEntry, error)
+	GetMpegSampleEntry() (*MpegSampleEntry, error)
+	GetESDBox() (*ESDBox, error)
 	GetBaseBox() (*BaseBox, error)
 }

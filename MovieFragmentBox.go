@@ -87,7 +87,7 @@ func (b *MovieFragmentBox) detailString() string {
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
 
 	sequenceNumber, baseMediaDecodeTime, trackID, timescale := b.Summary()
-	ret += fmt.Sprintf(" Summary:")
+	ret += " Summary:"
 	if sequenceNumber != nil {
 		ret += fmt.Sprintf(" SequenceNumber:%v", *sequenceNumber)
 	}

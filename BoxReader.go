@@ -46,8 +46,7 @@ unsigned int(8)[16] usertype = extended_type;
 } }
 */
 
-//NextBox - Returns the Box read
-func (d *BoxReader) NextBox() (Box, error) {
+func (d *BoxReader) readBoxHdr() (int64, string, []int8, []byte, error) {
 	var boxHdr struct {
 		Size    int32
 		BoxType [4]byte
@@ -60,22 +59,22 @@ func (d *BoxReader) NextBox() (Box, error) {
 	var bytesRead int
 	err = binary.Read(d.r, binary.BigEndian, &boxHdr.Size)
 	if err != nil {
-		return nil, err
+		return 0, "", nil, nil, err
 	}
 	bytesRead += 4
 	if boxHdr.Size == 0 {
 		//Last box
-		return nil, ErrLastBox
+		return 0, "", nil, nil, ErrLastBox
 	}
 	err = binary.Read(d.r, binary.BigEndian, &boxHdr.BoxType)
 	if err != nil {
-		return nil, err
+		return 0, "", nil, nil, err
 	}
 	bytesRead += 4
 	if boxHdr.Size == 1 {
 		err = binary.Read(d.r, binary.BigEndian, &boxSize)
 		if err != nil {
-			return nil, err
+			return 0, "", nil, nil, err
 		}
 		bytesRead += 8
 	} else {
@@ -86,7 +85,7 @@ func (d *BoxReader) NextBox() (Box, error) {
 		extendedType = make([]int8, 16)
 		err = binary.Read(d.r, binary.BigEndian, &extendedType)
 		if err != nil {
-			return nil, err
+			return boxSize, "", nil, nil, err
 		}
 		bytesRead += len(extendedType)
 	}
@@ -94,8 +93,17 @@ func (d *BoxReader) NextBox() (Box, error) {
 		payload = make([]byte, boxSize-int64(bytesRead))
 		err = binary.Read(d.r, binary.BigEndian, payload)
 		if err != nil {
-			return nil, err
+			return boxSize, boxType, extendedType, nil, err
 		}
+	}
+	return boxSize, boxType, extendedType, payload, err
+}
+
+//NextBox - Returns the Box read
+func (d *BoxReader) NextBox() (Box, error) {
+	boxSize, boxType, extendedType, payload, err := d.readBoxHdr()
+	if err != nil {
+		return nil, err
 	}
 	return d.makeBox(boxSize, boxType, &payload, extendedType)
 }

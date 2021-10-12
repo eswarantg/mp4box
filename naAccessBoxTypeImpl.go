@@ -215,3 +215,18 @@ func (*naAccessBoxTypeImpl) GetMovieBox() (*MovieBox, error) {
 
 //BaseBox -
 func (*naAccessBoxTypeImpl) GetBaseBox() (*BaseBox, error) { return nil, ErrBoxNotFound }
+
+//MP4Boxes
+
+func (*naAccessBoxTypeImpl) GetMP4VisualSampleEntry() (*MP4VisualSampleEntry, error) {
+	return nil, ErrBoxNotFound
+}
+func (*naAccessBoxTypeImpl) GetMP4AudioSampleEntry() (*MP4AudioSampleEntry, error) {
+	return nil, ErrBoxNotFound
+}
+func (*naAccessBoxTypeImpl) GetMpegSampleEntry() (*MpegSampleEntry, error) {
+	return nil, ErrBoxNotFound
+}
+func (*naAccessBoxTypeImpl) GetESDBox() (*ESDBox, error) {
+	return nil, ErrBoxNotFound
+}

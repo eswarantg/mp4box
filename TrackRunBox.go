@@ -209,19 +209,19 @@ func (b *TrackRunBox) String() string {
 	if v != nil {
 		ret += fmt.Sprintf(" ,SampleCount:%v ", *v)
 	} else {
-		ret += fmt.Sprintf(" SampleCount: <NIL> ")
+		ret += " SampleCount: <NIL> "
 	}
 	v = b.DataOffset()
 	if v != nil {
 		ret += fmt.Sprintf(" ,SampleCount:%v ", *v)
 	} else {
-		ret += fmt.Sprintf(" SampleCount: <NIL> ")
+		ret += " SampleCount: <NIL> "
 	}
 	v = b.FirstSampleFlags()
 	if v != nil {
 		ret += fmt.Sprintf(" ,FirstSampleFlags:%v ", *v)
 	} else {
-		ret += fmt.Sprintf(" FirstSampleFlags: <NIL> ")
+		ret += " FirstSampleFlags: <NIL> "
 	}
 	sampleDuration := b.SampleDuration()
 	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
