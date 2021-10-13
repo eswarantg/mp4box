@@ -444,7 +444,9 @@ func (b *ES_Descriptor) OCR_ES_Id() *uint16 {
 	return nil
 }
 
-func (b *ES_Descriptor) DecoderConfigDescriptor() *DecoderConfigDescriptor {
+func (b *ES_Descriptor) DecoderConfigDescriptor() (*DecoderConfigDescriptor, error) {
+	var err error
+	var used int
 	ret := DecoderConfigDescriptor{}
 	p := b.BaseDescriptor.getPayload()
 	offset := 2 + 1
@@ -460,13 +462,13 @@ func (b *ES_Descriptor) DecoderConfigDescriptor() *DecoderConfigDescriptor {
 	}
 	if len(p) > offset {
 		x := p[offset:]
-		used, err := ret.initData(&x, b.level+1)
+		used, err = ret.initData(&x, b.level+1)
 		fmt.Printf("\nDecoderConfigDescriptor bytes left o:%v p:%v", offset+used, len(p))
 		if err == nil {
-			return &ret
+			return &ret, nil
 		}
 	}
-	return nil
+	return nil, err
 }
 
 //String - Returns User Readable description of content
@@ -484,7 +486,13 @@ func (b *ES_Descriptor) String() string {
 	if b.OCRstreamFlag() {
 		ret += fmt.Sprintf(" OCR_ES_Id:%v", b.URLstring())
 	}
-	dcDesc := b.DecoderConfigDescriptor()
-	ret += dcDesc.String()
+	dcDesc, err := b.DecoderConfigDescriptor()
+	if err != nil {
+		ret += fmt.Sprintf("DecoderConfigDescriptor unable to read : %s", err.Error())
+	} else if dcDesc == nil {
+		ret += "DecoderConfigDescriptor is nil"
+	} else {
+		ret += dcDesc.String()
+	}
 	return ret
 }
