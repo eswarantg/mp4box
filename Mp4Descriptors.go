@@ -444,6 +444,43 @@ func (b *ES_Descriptor) OCR_ES_Id() *uint16 {
 	return nil
 }
 
+func (b *ES_Descriptor) SLConfigDescriptor() (*BaseDescriptor, error) {
+	var err error
+	var used int
+	ret := BaseDescriptor{}
+	p := b.BaseDescriptor.getPayload()
+	offset := 2 + 1
+	if b.StreamDependenceFlag() {
+		offset += 2
+	}
+	if b.StreamDependenceFlag() {
+		l := int(p[offset])
+		offset += 1 + l
+	}
+	if b.OCRstreamFlag() {
+		offset += 2
+	}
+	if len(p) > offset {
+		x := p[offset:]
+		decConfigDescr := DecoderConfigDescriptor{}
+		used, err = decConfigDescr.initData(&x, b.level+1)
+		fmt.Printf("\nDecoderConfigDescriptor bytes left o:%v p:%v", offset+used, len(p))
+		if err != nil {
+			return nil, err
+		}
+		offset += used
+		if len(p) > offset {
+			x := p[offset:]
+			used, err = ret.initData(&x, b.level+1)
+			fmt.Printf("\nSLConfigDescriptor bytes left o:%v p:%v", offset+used, len(p))
+			if err == nil {
+				return &ret, nil
+			}
+		}
+	}
+	return nil, err
+}
+
 func (b *ES_Descriptor) DecoderConfigDescriptor() (*DecoderConfigDescriptor, error) {
 	var err error
 	var used int
@@ -488,11 +525,23 @@ func (b *ES_Descriptor) String() string {
 	}
 	dcDesc, err := b.DecoderConfigDescriptor()
 	if err != nil {
+		ret += fmt.Sprintf("\n%d%s", b.level, b.leadString())
 		ret += fmt.Sprintf("DecoderConfigDescriptor unable to read : %s", err.Error())
 	} else if dcDesc == nil {
+		ret += fmt.Sprintf("\n%d%s", b.level, b.leadString())
 		ret += "DecoderConfigDescriptor is nil"
 	} else {
 		ret += dcDesc.String()
+	}
+	slConfigDescr, err := b.SLConfigDescriptor()
+	if err != nil {
+		ret += fmt.Sprintf("\n%d%s", b.level, b.leadString())
+		ret += fmt.Sprintf("SLConfigDescriptor unable to read : %s", err.Error())
+	} else if slConfigDescr == nil {
+		ret += fmt.Sprintf("\n%d%s", b.level, b.leadString())
+		ret += "SLConfigDescriptor is nil"
+	} else {
+		ret += slConfigDescr.String()
 	}
 	return ret
 }
