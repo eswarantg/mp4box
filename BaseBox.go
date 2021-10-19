@@ -2,9 +2,11 @@ package mp4box
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"math"
+	"strings"
 	"time"
 )
 
@@ -128,6 +130,10 @@ func (b *BaseBox) leadString() string {
 func (b *BaseBox) String() string {
 	var ret string
 	if b.payload != nil {
+		hdump := hex.Dump(*b.payload)
+		prefix := fmt.Sprintf("\n%d%v", b.level, b.leadString())
+		ret += prefix + b.Boxtype()
+		ret += prefix + strings.ReplaceAll(hdump, "\n", prefix)
 		ret += fmt.Sprintf("\n%d%vType: %v, Size: %v, Payload:%v", b.level, b.leadString(), b.Boxtype(), b.Size(), len(*b.payload))
 	} else {
 		ret += fmt.Sprintf("\n%d%vType: %v, Size: %v, Payload:<nil>", b.level, b.leadString(), b.Boxtype(), b.Size())

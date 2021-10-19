@@ -2,7 +2,9 @@ package mp4box
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
+	"strings"
 )
 
 /*
@@ -151,6 +153,10 @@ func (b *BaseDescriptor) descriptorSize() (int, int, error) {
 //String - Returns User Readable description of content
 func (b *BaseDescriptor) String() string {
 	var ret string
+	hdump := hex.Dump(*b.payload)
+	prefix := fmt.Sprintf("\n%d%v", b.level, b.leadString())
+	ret += prefix + b.DescriptorName()
+	ret += prefix + strings.ReplaceAll(hdump, "\n", prefix)
 	ret += fmt.Sprintf("\n%d%sTag: %v(%v), Len: %v, P:%v, O:%v", b.level, b.leadString(), b.DescriptorName(), b.DescriptorTag(), b.DescriptorSize(), len(*b.payload), b.payloadStOffset)
 	return ret
 }
