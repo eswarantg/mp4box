@@ -118,6 +118,15 @@ func (b *BaseBox) getPayload() []byte {
 	return ret
 }
 
+//getPayload - Returns the payload excluding headers
+func (b *BaseBox) GetPayload() []byte {
+	var ret []byte
+	if b.payload != nil {
+		return *b.payload
+	}
+	return ret
+}
+
 func (b *BaseBox) leadString() string {
 	var lead string
 	for i := 0; i < b.level; i++ {
