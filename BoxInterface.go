@@ -91,5 +91,6 @@ type Box interface {
 	GetMP4AudioSampleEntry() (*MP4AudioSampleEntry, error)
 	GetMpegSampleEntry() (*MpegSampleEntry, error)
 	GetESDBox() (*ESDBox, error)
+	GetEmsgBox() (*EmsgBox, error)
 	GetBaseBox() (*BaseBox, error)
 }

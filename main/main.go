@@ -157,7 +157,24 @@ func parseFile(testno int, name string) {
 			break
 		}
 		boxType := getType(box)
+		// fmt.Println("boxType: ", box.Boxtype())
 		fmt.Fprintf(os.Stdout, "\n%v %v", boxType, box.String())
+		// fmt.Println("\nBox String: ", box.String())
+		if box.Boxtype() == "emsg" {
+			fmt.Println("EMSG BOX INFO: ")
+			eMsgBox, err := box.GetEmsgBox()
+			if err != nil {
+				fmt.Println("err: ", err)
+				break
+			}
+			fmt.Println("\neMsgBox Payload: ", eMsgBox.GetPayload())
+			msgData := eMsgBox.GetMsgData()
+			fmt.Println("eMsgBox MsgData: ", msgData)
+			version := eMsgBox.Version()
+			fmt.Println("eMsgBox Version: ", version)
+			flags := eMsgBox.Flags()
+			fmt.Println("eMsgBox flags: ", flags)
+		}
 		//Get TimeScale from sidx box
 		dur := buildChunkDuration(box)
 		if dur != nil {

@@ -125,6 +125,8 @@ func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 		return new(MpegSampleEntry)
 	case "esds":
 		return new(ESDBox)
+	case "emsg":
+		return new(EmsgBox)
 	}
 	return new(BaseBox)
 }
