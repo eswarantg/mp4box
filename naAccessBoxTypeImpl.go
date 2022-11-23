@@ -1,193 +1,193 @@
 package mp4box
 
-//naAccessBoxTypeImpl - Returns nil for all types of Box
+// naAccessBoxTypeImpl - Returns nil for all types of Box
 type naAccessBoxTypeImpl struct {
 }
 
-//CollectionBaseBox -
+// CollectionBaseBox -
 func (*naAccessBoxTypeImpl) GetCollectionBaseBox() (*CollectionBaseBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//CollectionFullBox -
+// CollectionFullBox -
 func (*naAccessBoxTypeImpl) GetCollectionFullBox() (*CollectionFullBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//CollectionFullBoxCounted -
+// CollectionFullBoxCounted -
 func (*naAccessBoxTypeImpl) GetCollectionFullBoxCounted() (*CollectionFullBoxCounted, error) {
 	return nil, ErrBoxNotFound
 }
 
-//FileBox -
+// FileBox -
 func (*naAccessBoxTypeImpl) GetFileBox() (*FileBox, error) { return nil, ErrBoxNotFound }
 
-//MediaDataBox -
+// MediaDataBox -
 func (*naAccessBoxTypeImpl) GetMediaDataBox() (*MediaDataBox, error) { return nil, ErrBoxNotFound }
 
-//MovieHeaderBox -
+// MovieHeaderBox -
 func (*naAccessBoxTypeImpl) GetMovieHeaderBox() (*MovieHeaderBox, error) { return nil, ErrBoxNotFound }
 
-//TrackHeaderBox -
+// TrackHeaderBox -
 func (*naAccessBoxTypeImpl) GetTrackHeaderBox() (*TrackHeaderBox, error) { return nil, ErrBoxNotFound }
 
-//MediaHeaderBox -
+// MediaHeaderBox -
 func (*naAccessBoxTypeImpl) GetMediaHeaderBox() (*MediaHeaderBox, error) { return nil, ErrBoxNotFound }
 
-//HandlerBox -
+// HandlerBox -
 func (*naAccessBoxTypeImpl) GetHandlerBox() (*HandlerBox, error) { return nil, ErrBoxNotFound }
 
-//VideoMediaHeaderBox -
+// VideoMediaHeaderBox -
 func (*naAccessBoxTypeImpl) GetVideoMediaHeaderBox() (*VideoMediaHeaderBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SoundMediaHeaderBox -
+// SoundMediaHeaderBox -
 func (*naAccessBoxTypeImpl) GetSoundMediaHeaderBox() (*SoundMediaHeaderBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//HintMediaHeaderBox -
+// HintMediaHeaderBox -
 func (*naAccessBoxTypeImpl) GetHintMediaHeaderBox() (*HintMediaHeaderBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//NullMediaHeaderBox -
+// NullMediaHeaderBox -
 func (*naAccessBoxTypeImpl) GetNullMediaHeaderBox() (*NullMediaHeaderBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//DataEntryURLBox -
+// DataEntryURLBox -
 func (*naAccessBoxTypeImpl) GetDataEntryURLBox() (*DataEntryURLBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//DataEntryUrnBox -
+// DataEntryUrnBox -
 func (*naAccessBoxTypeImpl) GetDataEntryUrnBox() (*DataEntryUrnBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//TimeToSampleBox -
+// TimeToSampleBox -
 func (*naAccessBoxTypeImpl) GetTimeToSampleBox() (*TimeToSampleBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//CompositionOffsetBox -
+// CompositionOffsetBox -
 func (*naAccessBoxTypeImpl) GetCompositionOffsetBox() (*CompositionOffsetBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SampleDescriptionBox -
+// SampleDescriptionBox -
 func (*naAccessBoxTypeImpl) GetSampleDescriptionBox() (*SampleDescriptionBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SampleSizeBox -
+// SampleSizeBox -
 func (*naAccessBoxTypeImpl) GetSampleSizeBox() (*SampleSizeBox, error) { return nil, ErrBoxNotFound }
 
-//CompactSampleSizeBox -
+// CompactSampleSizeBox -
 func (*naAccessBoxTypeImpl) GetCompactSampleSizeBox() (*CompactSampleSizeBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SampleToChunkBox -
+// SampleToChunkBox -
 func (*naAccessBoxTypeImpl) GetSampleToChunkBox() (*SampleToChunkBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//ChunkOffsetBox -
+// ChunkOffsetBox -
 func (*naAccessBoxTypeImpl) GetChunkOffsetBox() (*ChunkOffsetBox, error) { return nil, ErrBoxNotFound }
 
-//ChunkLargeOffsetBox -
+// ChunkLargeOffsetBox -
 func (*naAccessBoxTypeImpl) GetChunkLargeOffsetBox() (*ChunkLargeOffsetBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SyncSampleBox -
+// SyncSampleBox -
 func (*naAccessBoxTypeImpl) GetSyncSampleBox() (*SyncSampleBox, error) { return nil, ErrBoxNotFound }
 
-//ShadowSyncSampleBox -
+// ShadowSyncSampleBox -
 func (*naAccessBoxTypeImpl) GetShadowSyncSampleBox() (*ShadowSyncSampleBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//DegradationPriorityBox -
+// DegradationPriorityBox -
 func (*naAccessBoxTypeImpl) GetDegradationPriorityBox() (*DegradationPriorityBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//PaddingBitsBox -
+// PaddingBitsBox -
 func (*naAccessBoxTypeImpl) GetPaddingBitsBox() (*PaddingBitsBox, error) { return nil, ErrBoxNotFound }
 
-//FreeSpaceBox -
+// FreeSpaceBox -
 func (*naAccessBoxTypeImpl) GetFreeSpaceBox() (*FreeSpaceBox, error) { return nil, ErrBoxNotFound }
 
-//EditListBox -
+// EditListBox -
 func (*naAccessBoxTypeImpl) GetEditListBox() (*EditListBox, error) { return nil, ErrBoxNotFound }
 
-//UserDataBox -
+// UserDataBox -
 func (*naAccessBoxTypeImpl) GetUserDataBox() (*UserDataBox, error) { return nil, ErrBoxNotFound }
 
-//CopyrightBox -
+// CopyrightBox -
 func (*naAccessBoxTypeImpl) GetCopyrightBox() (*CopyrightBox, error) { return nil, ErrBoxNotFound }
 
-//MovieExtendsHeaderBox -
+// MovieExtendsHeaderBox -
 func (*naAccessBoxTypeImpl) GetMovieExtendsHeaderBox() (*MovieExtendsHeaderBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//TrackExtendsBox -
+// TrackExtendsBox -
 func (*naAccessBoxTypeImpl) GetTrackExtendsBox() (*TrackExtendsBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//MovieFragmentHeaderBox -
+// MovieFragmentHeaderBox -
 func (*naAccessBoxTypeImpl) GetMovieFragmentHeaderBox() (*MovieFragmentHeaderBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//TrackFragmentHeaderBox -
+// TrackFragmentHeaderBox -
 func (*naAccessBoxTypeImpl) GetTrackFragmentHeaderBox() (*TrackFragmentHeaderBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//TrackRunBox -
+// TrackRunBox -
 func (*naAccessBoxTypeImpl) GetTrackRunBox() (*TrackRunBox, error) { return nil, ErrBoxNotFound }
 
-//TrackFragmentRandomAccessBox -
+// TrackFragmentRandomAccessBox -
 func (*naAccessBoxTypeImpl) GetTrackFragmentRandomAccessBox() (*TrackFragmentRandomAccessBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//MovieFragmentRandomAccessOffsetBox -
+// MovieFragmentRandomAccessOffsetBox -
 func (*naAccessBoxTypeImpl) GetMovieFragmentRandomAccessOffsetBox() (*MovieFragmentRandomAccessOffsetBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SampleDependencyTypeBox -
+// SampleDependencyTypeBox -
 func (*naAccessBoxTypeImpl) GetSampleDependencyTypeBox() (*SampleDependencyTypeBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SampleToGroupBox -
+// SampleToGroupBox -
 func (*naAccessBoxTypeImpl) GetSampleToGroupBox() (*SampleToGroupBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SampleGroupDescriptionBox -
+// SampleGroupDescriptionBox -
 func (*naAccessBoxTypeImpl) GetSampleGroupDescriptionBox() (*SampleGroupDescriptionBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//SampleScaleBox -
+// SampleScaleBox -
 func (*naAccessBoxTypeImpl) GetSampleScaleBox() (*SampleScaleBox, error) { return nil, ErrBoxNotFound }
 
-//SubSampleInformationBox -
+// SubSampleInformationBox -
 func (*naAccessBoxTypeImpl) GetSubSampleInformationBox() (*SubSampleInformationBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//ProgressiveDownloadInfoBox -
+// ProgressiveDownloadInfoBox -
 func (*naAccessBoxTypeImpl) GetProgressiveDownloadInfoBox() (*ProgressiveDownloadInfoBox, error) {
 	return nil, ErrBoxNotFound
 }
@@ -213,7 +213,7 @@ func (*naAccessBoxTypeImpl) GetMovieBox() (*MovieBox, error) {
 	return nil, ErrBoxNotFound
 }
 
-//BaseBox -
+// BaseBox -
 func (*naAccessBoxTypeImpl) GetBaseBox() (*BaseBox, error) { return nil, ErrBoxNotFound }
 
 //MP4Boxes
@@ -228,5 +228,8 @@ func (*naAccessBoxTypeImpl) GetMpegSampleEntry() (*MpegSampleEntry, error) {
 	return nil, ErrBoxNotFound
 }
 func (*naAccessBoxTypeImpl) GetESDBox() (*ESDBox, error) {
+	return nil, ErrBoxNotFound
+}
+func (*naAccessBoxTypeImpl) GetEmsgBox() (*EmsgBox, error) {
 	return nil, ErrBoxNotFound
 }

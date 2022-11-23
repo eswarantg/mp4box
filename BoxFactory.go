@@ -1,10 +1,10 @@
 package mp4box
 
-//BoxFactory - Create BoxObject
+// BoxFactory - Create BoxObject
 type BoxFactory struct {
 }
 
-//MakeEmptyBoxObject - make object by boxType
+// MakeEmptyBoxObject - make object by boxType
 func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 	//collectionBaseBoxList
 	switch boxType {
@@ -125,6 +125,8 @@ func (BoxFactory) MakeEmptyBoxObject(boxType string) Box {
 		return new(MpegSampleEntry)
 	case "esds":
 		return new(ESDBox)
+	case "emsg":
+		return new(EmsgBox)
 	}
 	return new(BaseBox)
 }

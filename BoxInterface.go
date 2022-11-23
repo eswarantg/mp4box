@@ -5,10 +5,10 @@ import (
 	"io"
 )
 
-//ErrBoxNotFound - box searched is not found
+// ErrBoxNotFound - box searched is not found
 var ErrBoxNotFound error = errors.New("BoxNotFound")
 
-//Box - Interface for ISO BMFF Box
+// Box - Interface for ISO BMFF Box
 type Box interface {
 	//Internal: GetBox()
 	getLevel() int
@@ -91,5 +91,6 @@ type Box interface {
 	GetMP4AudioSampleEntry() (*MP4AudioSampleEntry, error)
 	GetMpegSampleEntry() (*MpegSampleEntry, error)
 	GetESDBox() (*ESDBox, error)
+	GetEmsgBox() (*EmsgBox, error)
 	GetBaseBox() (*BaseBox, error)
 }
