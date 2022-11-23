@@ -82,7 +82,7 @@ func (b *EmsgBox) GetPayload() []byte {
 	return b.MsgPayload
 }
 
-// GetTimeScale - Returns the timescale data from payload
+// GetTimeScale - Returns the timescale value from payload
 func (b *EmsgBox) GetTimeScale() uint32 {
 	return b.TimeScale
 }
@@ -92,7 +92,7 @@ func (b *EmsgBox) GetSchemeInfo() (string, string) {
 	return b.SchemeIdUri, b.Value
 }
 
-// GetEventDuration - Returns EventDuration bytes from payload
+// GetEventDuration - Returns EventDuration value from payload
 func (b *EmsgBox) GetEventDuration() uint32 {
 	return b.EvtDur
 }
