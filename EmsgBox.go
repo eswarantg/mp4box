@@ -2,19 +2,33 @@ package mp4box
 
 import (
 	"bytes"
-	"encoding/binary"
 	"fmt"
 )
 
-//FullBox - Base box holding the bytes
+//EmsgBox -
 /*
-aligned(8) class FullBox(unsigned int(32) boxtype, unsigned int(8) v, bit(24) f) extends Box(boxtype) {
-	unsigned int(8) version = v;
-	bit(24) flags = f;
+aligned(8) class DASHEventMessageBox extends FullBox('emsg', version, flags = 0) {
+    if (version==0) {
+        string              scheme_id_uri;
+        string              value;
+        unsigned int(32)    timescale;
+        unsigned int(32)    presentation_time_delta;
+        unsigned int(32)    event_duration;
+        unsigned int(32)    id;
+    } else if (version==1) {
+        unsigned int(32)    timescale;
+        unsigned int(64)    presentation_time;
+        unsigned int(32)    event_duration;
+        unsigned int(32)    id;
+        string              scheme_id_uri;
+        string              value;
+    }
+    unsigned int(8) message_data[];
 }
 */
+
 type EmsgBox struct {
-	BaseBox
+	FullBox
 	SchemeIdUri      string
 	SchemeIdVal      string
 	MsgData          string
@@ -32,7 +46,7 @@ func (b *EmsgBox) getLeafBox() Box {
 
 //GetEmsgBox - Implement Box method for this object
 func (b *EmsgBox) GetEmsgBox() (*EmsgBox, error) {
-	b.SchemeIdUri, b.SchemeIdVal, b.MsgData, b.TimeScale, b.PresentTimeDelta, b.EvtDur, b.IdVal = b.GetAllData()
+	// b.SchemeIdUri, b.SchemeIdVal, b.MsgData, b.TimeScale, b.PresentTimeDelta, b.EvtDur, b.IdVal, err := b.GetAllData()
 	return b, nil
 }
 
@@ -40,7 +54,7 @@ func (b *EmsgBox) GetEmsgBox() (*EmsgBox, error) {
 
 //GetPayload - Returns the payload excluding headers
 func (b *EmsgBox) GetPayload() []byte {
-	ret := b.BaseBox.getPayload()
+	ret := b.FullBox.getPayload()
 	return ret
 }
 
@@ -54,73 +68,72 @@ func (b *EmsgBox) GetTimeScale() []byte {
 	return b.TimeScale
 }
 
-func (b *EmsgBox) GetAllData() (schemeIdUri string, schemeIdVal string, msgData string,
-	timeScale []byte, presentTimeDelta []byte, evtDur []byte, idVal []byte) {
-	payload := b.BaseBox.getPayload()
-	if b.Version() == 0 && len(payload) > 16 {
-		startPayload := payload[4:]
-		schemeIdUriIdx := bytes.IndexByte(startPayload, 0)
-		schemeIdUri = string(startPayload[0:schemeIdUriIdx])
-
-		schemeIdValPayload := startPayload[schemeIdUriIdx+1:]
-		schemeIdValIdx := bytes.IndexByte(schemeIdValPayload, 0)
-		schemeIdVal = string(schemeIdValPayload[0:schemeIdValIdx])
-
-		otherPayload := schemeIdValPayload[schemeIdValIdx+1:]
-		timeScale = otherPayload[0:4]
-		presentTimeDelta = otherPayload[4:8]
-		evtDur = otherPayload[8:12]
-		idVal = otherPayload[12:16]
-		msgData = string(otherPayload[16:])
-	}
-	if b.Version() == 1 && len(payload) > 20 {
-		otherPayload := payload[4:]
-		timeScale = otherPayload[0:4]
-		presentTimeDelta = otherPayload[4:12]
-		evtDur = otherPayload[12:16]
-		idVal = otherPayload[16:20]
-
-		startPayload := payload[20:]
-		schemeIdUriIdx := bytes.IndexByte(startPayload, 0)
-		schemeIdUri = string(startPayload[0:schemeIdUriIdx])
-
-		schemeIdValPayload := startPayload[schemeIdUriIdx+1:]
-		schemeIdValIdx := bytes.IndexByte(schemeIdValPayload, 0)
-		schemeIdVal = string(schemeIdValPayload[0:schemeIdValIdx])
-
-	}
-	return
+//GetSchemeInfo - Returns SchemeIdUri and value from payload
+func (b *EmsgBox) GetSchemeInfo() (string, string) {
+	return b.SchemeIdUri, b.SchemeIdVal
 }
 
-//Version - returns the version of the box
-func (b *EmsgBox) Version() int8 {
-	var ret int8
-	p := b.BaseBox.getPayload()
-	if len(p) >= 1 {
-		return int8(p[0])
-	}
-	//Improper Box
-	return ret
+//GetEventDuration - Returns EventDuration bytes from payload
+func (b *EmsgBox) GetEventDuration() []byte {
+	return b.EvtDur
 }
 
-//Flags - Returns flags
-// bit(24) - fit to lower 24 bits of uint32
-func (b *EmsgBox) Flags() uint32 {
-	var ret uint32
-	p := b.BaseBox.getPayload()
-	if len(p) >= 4 {
-		buf := []byte{p[1], p[2], p[3], 0}
-		ret = binary.BigEndian.Uint32(buf)
+func (b *EmsgBox) ParseAllData() error {
+	var err error
+	payload := b.FullBox.getPayload()
+	if b.Version() > 1 || b.Version() < 0 {
+		err = fmt.Errorf("eMsg Box version invalid")
+		return err
 	}
-	//Improper Box
-	return ret
+	if b.Version() == 0 {
+		if len(payload) > 16 {
+			startPayload := payload
+			schemeIdUriIdx := bytes.IndexByte(startPayload, 0)
+			b.SchemeIdUri = string(startPayload[0:schemeIdUriIdx])
+
+			schemeIdValPayload := startPayload[schemeIdUriIdx+1:]
+			schemeIdValIdx := bytes.IndexByte(schemeIdValPayload, 0)
+			b.SchemeIdVal = string(schemeIdValPayload[0:schemeIdValIdx])
+
+			otherPayload := schemeIdValPayload[schemeIdValIdx+1:]
+			b.TimeScale = otherPayload[0:4]
+			b.PresentTimeDelta = otherPayload[4:8]
+			b.EvtDur = otherPayload[8:12]
+			b.IdVal = otherPayload[12:16]
+			b.MsgData = string(otherPayload[16:])
+		} else {
+			err = fmt.Errorf("eMsg Box payload is invalid")
+			return err
+		}
+	}
+	if b.Version() == 1 {
+		if len(payload) > 20 {
+			otherPayload := payload
+			b.TimeScale = otherPayload[0:4]
+			b.PresentTimeDelta = otherPayload[4:12]
+			b.EvtDur = otherPayload[12:16]
+			b.IdVal = otherPayload[16:20]
+
+			startPayload := payload[20:]
+			schemeIdUriIdx := bytes.IndexByte(startPayload, 0)
+			b.SchemeIdUri = string(startPayload[0:schemeIdUriIdx])
+
+			schemeIdValPayload := startPayload[schemeIdUriIdx+1:]
+			schemeIdValIdx := bytes.IndexByte(schemeIdValPayload, 0)
+			b.SchemeIdVal = string(schemeIdValPayload[0:schemeIdValIdx])
+		} else {
+			err = fmt.Errorf("eMsg Box payload is invalid")
+			return err
+		}
+	}
+	return nil
 }
 
 //String - Returns User Readable description of content
 func (b *EmsgBox) String() string {
 	var ret string
-	ret += b.BaseBox.String()
-	ret += fmt.Sprintf("\n%d%v ", b.level, b.leadString())
-	ret += fmt.Sprintf(" Version: %v, Flags: %v", b.Version(), b.Flags())
+	ret += b.FullBox.String()
+	ret += fmt.Sprintf("\n%d%v ", b.FullBox.level, b.FullBox.leadString())
+	ret += fmt.Sprintf(" Version: %v, Flags: %v", b.FullBox.Version(), b.FullBox.Flags())
 	return ret
 }
