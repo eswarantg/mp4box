@@ -2,6 +2,8 @@ package mp4box
 
 import (
 	"bytes"
+	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 )
 
@@ -29,62 +31,77 @@ aligned(8) class DASHEventMessageBox extends FullBox('emsg', version, flags = 0)
 
 type EmsgBox struct {
 	FullBox
+	parsed           bool
 	SchemeIdUri      string
-	SchemeIdVal      string
-	MsgData          string
-	TimeScale        []byte
-	PresentTimeDelta []byte
-	EvtDur           []byte
-	IdVal            []byte
+	Value            string
+	TimeScale        uint32
+	PresentTimeDelta uint32
+	PresentTime      uint64
+	EvtDur           uint32
+	IdVal            uint32
+	MsgPayload       []byte
 }
 
-//Interface methods Impl - Begin
-//getLeafBox() returns leaf object Box interface
+// Interface methods Impl - Begin
+// getLeafBox() returns leaf object Box interface
 func (b *EmsgBox) getLeafBox() Box {
 	return b
 }
 
-//GetEmsgBox - Implement Box method for this object
+// GetEmsgBox - Implement Box method for this object
 func (b *EmsgBox) GetEmsgBox() (*EmsgBox, error) {
+	if !b.parsed {
+		err := b.parseAllData()
+		if err != nil {
+			return nil, err
+		}
+		b.parsed = true
+	}
 	return b, nil
+}
+
+// GetPresentTime - Returns EMsg Id from payload
+func (b *EmsgBox) GetEmsgId() uint32 {
+	return b.IdVal
+}
+
+// GetPresentTime - Returns the Present Time value from payload
+func (b *EmsgBox) GetPresentTime() uint64 {
+	return b.PresentTime
+}
+
+// GetPresentTimeDelta - Returns the Present Time Delta value from payload
+func (b *EmsgBox) GetPresentTimeDelta() uint32 {
+	return b.PresentTimeDelta
 }
 
 //Interface methods Impl - End
 
-//GetPayload - Returns the payload excluding headers
+// getPayload - Returns the payload excluding headers
 func (b *EmsgBox) GetPayload() []byte {
-	ret := b.FullBox.getPayload()
-	return ret
+	return b.MsgPayload
 }
 
-//GetMsgData - Returns the message data from payload
-func (b *EmsgBox) GetMsgData() string {
-	return b.MsgData
-}
-
-//GetTimeScale - Returns the timescale data from payload
-func (b *EmsgBox) GetTimeScale() []byte {
+// GetTimeScale - Returns the timescale data from payload
+func (b *EmsgBox) GetTimeScale() uint32 {
 	return b.TimeScale
 }
 
-//GetSchemeInfo - Returns SchemeIdUri and value from payload
+// GetSchemeInfo - Returns SchemeIdUri and value from payload
 func (b *EmsgBox) GetSchemeInfo() (string, string) {
-	return b.SchemeIdUri, b.SchemeIdVal
+	return b.SchemeIdUri, b.Value
 }
 
-//GetEventDuration - Returns EventDuration bytes from payload
-func (b *EmsgBox) GetEventDuration() []byte {
+// GetEventDuration - Returns EventDuration bytes from payload
+func (b *EmsgBox) GetEventDuration() uint32 {
 	return b.EvtDur
 }
 
-func (b *EmsgBox) ParseAllData() error {
+func (b *EmsgBox) parseAllData() error {
 	var err error
 	payload := b.FullBox.getPayload()
-	if b.Version() > 1 || b.Version() < 0 {
-		err = fmt.Errorf("eMsg Box version invalid")
-		return err
-	}
-	if b.Version() == 0 {
+	switch b.FullBox.Version() {
+	case 0:
 		if len(payload) > 16 {
 			startPayload := payload
 			schemeIdUriIdx := bytes.IndexByte(startPayload, 0)
@@ -92,26 +109,25 @@ func (b *EmsgBox) ParseAllData() error {
 
 			schemeIdValPayload := startPayload[schemeIdUriIdx+1:]
 			schemeIdValIdx := bytes.IndexByte(schemeIdValPayload, 0)
-			b.SchemeIdVal = string(schemeIdValPayload[0:schemeIdValIdx])
+			b.Value = string(schemeIdValPayload[0:schemeIdValIdx])
 
 			otherPayload := schemeIdValPayload[schemeIdValIdx+1:]
-			b.TimeScale = otherPayload[0:4]
-			b.PresentTimeDelta = otherPayload[4:8]
-			b.EvtDur = otherPayload[8:12]
-			b.IdVal = otherPayload[12:16]
-			b.MsgData = string(otherPayload[16:])
+			b.TimeScale = binary.BigEndian.Uint32(otherPayload[0:4])
+			b.PresentTimeDelta = binary.BigEndian.Uint32(otherPayload[4:8])
+			b.EvtDur = binary.BigEndian.Uint32(otherPayload[8:12])
+			b.IdVal = binary.BigEndian.Uint32(otherPayload[12:16])
+			b.MsgPayload = otherPayload[16:]
 		} else {
 			err = fmt.Errorf("eMsg Box payload is invalid")
 			return err
 		}
-	}
-	if b.Version() == 1 {
+	case 1:
 		if len(payload) > 20 {
 			otherPayload := payload
-			b.TimeScale = otherPayload[0:4]
-			b.PresentTimeDelta = otherPayload[4:12]
-			b.EvtDur = otherPayload[12:16]
-			b.IdVal = otherPayload[16:20]
+			b.TimeScale = binary.BigEndian.Uint32(otherPayload[0:4])
+			b.PresentTime = binary.BigEndian.Uint64(otherPayload[4:12])
+			b.EvtDur = binary.BigEndian.Uint32(otherPayload[12:16])
+			b.IdVal = binary.BigEndian.Uint32(otherPayload[16:20])
 
 			startPayload := payload[20:]
 			schemeIdUriIdx := bytes.IndexByte(startPayload, 0)
@@ -119,20 +135,28 @@ func (b *EmsgBox) ParseAllData() error {
 
 			schemeIdValPayload := startPayload[schemeIdUriIdx+1:]
 			schemeIdValIdx := bytes.IndexByte(schemeIdValPayload, 0)
-			b.SchemeIdVal = string(schemeIdValPayload[0:schemeIdValIdx])
+			b.Value = string(schemeIdValPayload[0:schemeIdValIdx])
+			b.MsgPayload = schemeIdValPayload[schemeIdValIdx:]
 		} else {
 			err = fmt.Errorf("eMsg Box payload is invalid")
 			return err
 		}
+	default:
+		err = fmt.Errorf("eMsg Box version invalid")
+		return err
 	}
 	return nil
 }
 
-//String - Returns User Readable description of content
+// String - Returns User Readable description of content
 func (b *EmsgBox) String() string {
 	var ret string
 	ret += b.FullBox.String()
+	ret += fmt.Sprintf(" SchemeIdUri: %v, Value: %v, TimeScale: %v, PresentationTimeDelta:%v, PresentationTime:%v, EventDur:%v, IdVal:%v",
+		b.SchemeIdUri, b.Value, b.TimeScale,
+		b.PresentTimeDelta, b.PresentTime, b.EvtDur, b.IdVal)
 	ret += fmt.Sprintf("\n%d%v ", b.FullBox.level, b.FullBox.leadString())
-	ret += fmt.Sprintf(" Version: %v, Flags: %v", b.FullBox.Version(), b.FullBox.Flags())
+	hdump := hex.Dump(b.MsgPayload)
+	ret += fmt.Sprintf("%v", hdump)
 	return ret
 }

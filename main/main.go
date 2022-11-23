@@ -158,7 +158,6 @@ func parseFile(testno int, name string) {
 		}
 		boxType := getType(box)
 		// fmt.Println("boxType: ", box.Boxtype())
-		fmt.Fprintf(os.Stdout, "\n%v %v", boxType, box.String())
 		// fmt.Println("\nBox String: ", box.String())
 		if box.Boxtype() == "emsg" {
 			fmt.Println("\nEMSG BOX INFO: ")
@@ -167,13 +166,8 @@ func parseFile(testno int, name string) {
 				fmt.Println("err: ", err)
 				break
 			}
-			err = eMsgBox.ParseAllData()
-			if err != nil {
-				fmt.Println("err: ", err)
-				break
-			}
-			fmt.Println("\neMsgBox Payload: ", eMsgBox.GetPayload())
-			msgData := eMsgBox.GetMsgData()
+			fmt.Fprintf(os.Stdout, "\n%v %v", boxType, box.String())
+			msgData := eMsgBox.GetPayload()
 			fmt.Println("eMsgBox MsgData: ", msgData)
 			schemeIdUri, schemeIdVal := eMsgBox.GetSchemeInfo()
 			fmt.Println("eMsgBox schemeInfo: ", schemeIdUri, " : ", schemeIdVal)
