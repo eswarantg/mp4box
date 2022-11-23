@@ -46,7 +46,6 @@ func (b *EmsgBox) getLeafBox() Box {
 
 //GetEmsgBox - Implement Box method for this object
 func (b *EmsgBox) GetEmsgBox() (*EmsgBox, error) {
-	// b.SchemeIdUri, b.SchemeIdVal, b.MsgData, b.TimeScale, b.PresentTimeDelta, b.EvtDur, b.IdVal, err := b.GetAllData()
 	return b, nil
 }
 
