@@ -230,3 +230,6 @@ func (*naAccessBoxTypeImpl) GetMpegSampleEntry() (*MpegSampleEntry, error) {
 func (*naAccessBoxTypeImpl) GetESDBox() (*ESDBox, error) {
 	return nil, ErrBoxNotFound
 }
+func (*naAccessBoxTypeImpl) GetEmsgBox() (*EmsgBox, error) {
+	return nil, ErrBoxNotFound
+}
